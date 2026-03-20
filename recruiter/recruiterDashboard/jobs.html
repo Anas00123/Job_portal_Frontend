@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recruiter - Jobs</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* ===== Base ===== */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6fa;
+        }
+
+        /* ===== Layout ===== */
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 250px;
+            background: #091d33;
+            color: #fff;
+            transition: .3s ease;
+        }
+
+        .sidebar .nav-link {
+            color: #cbd5e1;
+            padding: 12px 20px;
+            font-size: 15px;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: #122c4f;
+            border-left: 4px solid #18a99c;
+            color: #fff;
+        }
+
+
+        /* ===== Content ===== */
+        .content {
+            flex-grow: 1;
+            padding: 25px;
+        }
+
+        /* ===== Buttons ===== */
+        .btn-teal {
+            background: #18a99c;
+            border-color: #18a99c;
+            color: #fff;
+        }
+
+        .btn-teal:hover {
+
+            background: #149488;
+            border-color: #149488;
+        }
+
+        /* ===== Cards ===== */
+        .card {
+            border: none;
+            border-radius: 12px;
+        }
+
+        /* ===== Toggle Button ===== */
+        #toggleBtn {
+            width: 50px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #toggleBtn i {
+            font-size: 22px;
+        }
+
+        /* ===== Tablet & Mobile Sidebar ===== */
+        @media (max-width:991px) {
+
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                height: 100%;
+                z-index: 1050;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .4);
+                display: none;
+                z-index: 1040;
+            }
+
+            .overlay.show {
+                display: block;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        /* ===== Mobile Table to Card Layout ===== */
+        @media (max-width:576px) {
+
+            .content {
+                padding: 15px;
+            }
+
+            .navbar-brand {
+                font-size: 16px;
+            }
+
+            .btn-teal {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tr {
+                display: block;
+                background: #fff;
+                margin-bottom: 15px;
+                border-radius: 10px;
+                padding: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            .table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                padding: 6px 0;
+                font-size: 13px;
+            }
+
+            .table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+            }
+
+            .table td[data-label="Actions"] {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .table td[data-label="Actions"] .btn {
+                width: 100%;
+                font-size: 12px;
+                padding: 5px;
+            }
+
+            #toggleBtn {
+                width: 50px;
+                /* increase width */
+                height: 40px;
+                /* optional: adjust height */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #toggleBtn:hover {
+
+                background-color: #18a99c;
+                border-color: #18a99c;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== Navbar ===== -->
+    <nav class="navbar navbar-light bg-white shadow-sm px-3">
+        <div class="container-fluid d-flex justify-content-between gap-2 align-items-center">
+
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="toggleBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="navbar-brand mb-0 h5">Jobs Management</span>
+            </div>
+
+            <a href="#" class="btn btn-teal">
+                <i class="bi bi-plus-circle me-1"></i> Post New Job
+            </a>
+
+        </div>
+    </nav>
+
+    <div class="wrapper">
+
+        <!-- ===== Sidebar ===== -->
+        <div class="sidebar p-3" id="sidebar">
+            <h5 class="text-white mb-4">Recruiter Panel</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="recruiterDashboard.html">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link active" href="jobs.html">Jobs</a></li>
+                <li class="nav-item"><a class="nav-link" href="applications.html">Applications</a></li>
+                <li class="nav-item"><a class="nav-link" href="interviews.html">Interviews</a></li>
+                <li class="nav-item"><a class="nav-link" href="">Offers</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="overlay" id="overlay"></div>
+
+        <!-- ===== Content ===== -->
+        <div class="content">
+
+            <!-- Search & Filter -->
+            <div class="card shadow-sm p-3 mb-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Search job title...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>Status</option>
+                            <option>Active</option>
+                            <option>Closed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>Location</option>
+                            <option>Remote</option>
+                            <option>Onsite</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-teal">Filter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Table -->
+            <div class="card shadow-sm p-4">
+                <h6 class="mb-3">All Posted Jobs</h6>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Location</th>
+                                <th>Applications</th>
+                                <th>Status</th>
+                                <th>Posted Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td data-label="Job Title">Frontend Developer</td>
+                                <td data-label="Location">Remote</td>
+                                <td data-label="Applications">120</td>
+                                <td data-label="Status"><span class="badge bg-success">Active</span></td>
+                                <td data-label="Posted Date">15 Feb 2026</td>
+                                <td data-label="Actions">
+                                    <button class="btn btn-sm btn-outline-success">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td data-label="Job Title">Backend Developer</td>
+                                <td data-label="Location">Onsite</td>
+                                <td data-label="Applications">85</td>
+                                <td data-label="Status"><span class="badge bg-danger">Closed</span></td>
+                                <td data-label="Posted Date">10 Feb 2026</td>
+                                <td data-label="Actions">
+                                    <button class="btn btn-sm btn-outline-success">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../config.js"></script>
+    <!-- ===== JS ===== -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const toggleBtn = document.getElementById("toggleBtn");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("overlay");
+
+            toggleBtn.addEventListener("click", function () {
+                sidebar.classList.toggle("show");
+                overlay.classList.toggle("show");
+            });
+
+            overlay.addEventListener("click", function () {
+                sidebar.classList.remove("show");
+                overlay.classList.remove("show");
+            });
+
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

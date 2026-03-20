@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JobsHunt Dashboard</title>
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="/assets/css/userHomeCss.css">
+
+    <style>
+        /* ── Search Bar ── */
+        .jobs-search-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+            flex-wrap: wrap;
+        }
+
+        .search-field {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 120px;
+            border-right: 1.5px solid #f0f0f0;
+            padding-right: 10px;
+        }
+
+        .search-field:last-of-type {
+            border-right: none;
+        }
+
+        .search-icon {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-right: 7px;
+            flex-shrink: 0;
+        }
+
+        .search-field input {
+            border: none;
+            outline: none;
+            font-size: 13.5px;
+            color: #374151;
+            width: 100%;
+            background: transparent;
+        }
+
+        .search-field input::placeholder {
+            color: #b0b7c3;
+        }
+
+        .search-clear-btn {
+            background: #f3f4f6;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background.2s;
+            flex-shrink: 0;
+        }
+
+        .search-clear-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* ── Active Filter Chips ── */
+        .active-filters {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            min-height: 0;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            animation: chipIn .2s ease;
+        }
+
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: #1d4ed8;
+            cursor: pointer;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        @keyframes chipIn {
+            from {
+                opacity: 0;
+                transform: scale(.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ── Pagination ── */
+        .jobs-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .jobs-pagination button {
+            min-width: 36px;
+            height: 36px;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .jobs-pagination button:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+        }
+
+        .jobs-pagination button.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+
+        .jobs-pagination button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-expand-lg jobhunt-navbar">
+
+        <div class="container">
+
+            <!-- Logo -->
+            <a class=" fw-bold fs-3" href="#">
+                <span class="text-white">Jobs</span><span class="logo-accent">Hunt</span>
+            </a>
+
+
+
+            <!-- Navbar Content -->
+            <!-- <div class="collapse container-fluid navbar-collapse" id="navbarContent"> -->
+
+                <!-- Left menu -->
+                <!-- <ul class="navbar-nav mx-auto"> -->
+
+                    <!-- Jobs dropdown -->
+                    <!-- <li class="nav-item dropdown jobs-dropdown">
+
+                        <a class="nav-link " href="#" data-bs-toggle="dropdown">
+                            Jobs
+                        </a>
+
+                        <div class="dropdown-menu jobs-mega">
+
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <h6>Jobs by Category</h6>
+                                    <a class="dropdown-item cursor-pointer">IT Software Jobs</a>
+                                    <a class="dropdown-item cursor-pointer">BPO Jobs</a>
+                                    <a class="dropdown-item cursor-pointer">Sales Jobs</a>
+                                    <a class="dropdown-item cursor-pointer">Bank Jobs</a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h6>Jobs by Role</h6>
+                                    <a class="dropdown-item cursor-pointer">Java Developer</a>
+                                    <a class="dropdown-item cursor-pointer">Frontend Developer</a>
+                                    <a class="dropdown-item cursor-pointer">HR Manager</a>
+                                    <a class="dropdown-item cursor-pointer">Software Engineer</a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h6>Jobs by Location</h6>
+                                    <a class="dropdown-item cursor-pointer">Jobs in Bangalore</a>
+                                    <a class="dropdown-item cursor-pointer">Jobs in Hyderabad</a>
+                                    <a class="dropdown-item cursor-pointer">Jobs in Pune</a>
+                                    <a class="dropdown-item cursor-pointer">Jobs in Delhi</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link">Companies</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link">Services</a>
+                    </li>
+
+                </ul> -->
+
+
+                <!-- Search -->
+                <!-- <div class="search-box p-1 me-5">
+
+                    <input type="text" placeholder="Search Jobs">
+
+                    <button>
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </div> -->
+
+
+                <!-- Profile dropdown -->
+                <div class="dropdown">
+
+                    <div class="profile-btn " data-bs-toggle="dropdown">
+
+                        <span id="navUsername"></span>
+
+                        <div class="profile-circle" id="navAvatar"></div>
+
+                    </div>
+
+                    <ul class="dropdown-menu profile-menu dropdown-menu-end">
+
+                        <li><a class="dropdown-item cursor-pointer">My Home</a></li>
+                        <li><a class="dropdown-item cursor-pointer">Profile</a></li>
+                        <li><a class="dropdown-item cursor-pointer" href="appliedJobs.html">Applied Jobs</a></li>
+                        <li><a class="dropdown-item cursor-pointer">Settings</a></li>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item ">
+                                <button class="btn btn-danger" onclick="logout()">
+                                    Logout
+                                </button>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            <!-- </div> -->
+
+        </div>
+
+    </nav>
+    <!-- ================= MOBILE NAVBAR ================= -->
+
+    <header class="jh-mobile-navbar">
+
+        <!-- LEFT TOGGLE -->
+        <div class="jh-toggle-btn" onclick="openSidebar()">
+            <i class="bi bi-list"></i>
+        </div>
+
+
+        <!-- SEARCH BAR -->
+        <div class="jh-mobile-search" onclick="openSearchModal()">
+
+            <i class="bi bi-search"></i>
+
+            <input type="text" placeholder="Search jobs, skills..." readonly>
+
+        </div>
+
+
+        <!-- PROFILE -->
+        <div class="jh-profile-wrapper">
+            <div class="jh-avatar" id="mobileAvatar" onclick="toggleProfileMenu(event)"></div>
+
+            <div class="jh-profile-dropdown" id="profileDropdown">
+
+                <div class="cursor-pointer">My Home</div>
+                <div class="cursor-pointer">Profile</div>
+                <div class="cursor-pointer" ><a href="appliedJobs.html">Applied Jobs</a></div>
+                <div class="cursor-pointer">Settings</div>
+
+                <hr>
+
+                <div class="logout cursor-pointer"><button class="btn btn-danger rounded-pill "
+                        onclick="logout()">Logout</button></div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <div class="jh-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div class="jh-sidebar" id="sidebar">
+
+
+        <div class="jh-sidebar-header fw-bolder display-5 mb-5">
+            Jobs<span class="text-cyan-color">Hunt</span>
+        </div>
+
+        <div class="jh-sidebar-menu">
+            <div>Jobs</div>
+            <div>Companies</div>
+            <div>Services</div>
+            <div>Profile</div>
+            <div>Logout</div>
+        </div>
+
+    </div>
+
+
+
+
+    <!-- ================= SEARCH MODAL ================= -->
+
+    <div class="jh-search-overlay" id="searchOverlay" onclick="outsideSearchClick(event)">
+
+        <div class="jh-search-modal">
+
+            <input type="text" placeholder="Search jobs, skills, companies">
+
+            <div class="jh-search-filters">
+
+                <div>Location</div>
+                <div>Experience</div>
+                <div>Salary</div>
+                <div>Work Mode</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+        <div class="dashboard">
+
+
+            <!-- LEFT PROFILE -->
+
+            <div class="profile-card">
+
+                <div class="profile-ring" id="profileAvatar"></div>
+
+                <div class="profile-name">
+
+                </div>
+                <div class="text-muted" id="profileExperience"></div>
+
+                <div class="text-muted" id="profileEducation">
+                    Add Education
+                </div>
+
+                <a href="/user/profile.html">
+                    <button class="update-btn">
+                        Update Profile
+                    </button></a>
+
+                <hr>
+
+                <div class="text-start">
+                    <!-- 
+                    <p class="text-muted mb-1">
+                        <span class="text-warning fs-5">⚠</span> Preferred Location
+                    </p> -->
+
+                    <p class="text-muted mb-1">
+                        <span class="text-warning fs-5">⚠</span> Add Skills
+                    </p>
+                    <div id="profileSkillsContainer"></div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CENTER JOBS -->
+            <div>
+                <!-- Search & Filter Bar -->
+                <div class="jobs-search-bar">
+                    <div class="search-field">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" id="searchTitle" placeholder="Job title, skills..."
+                            oninput="debounceSearch()">
+                    </div>
+                    <div class="search-field">
+                        <i class="bi bi-geo-alt search-icon"></i>
+                        <input type="text" id="searchLocation" placeholder="Location..." oninput="debounceSearch()">
+                    </div>
+                    <div class="search-field">
+                        <i class="bi bi-tag search-icon"></i>
+                        <input type="text" id="searchCategory" placeholder="Category..." oninput="debounceSearch()">
+                    </div>
+                    <button class="search-clear-btn" onclick="clearSearch()" title="Clear filters">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Active filters chips -->
+                <div id="activeFilters" class="active-filters"></div>
+
+                <!-- Title + Count -->
+                <div class="section-title">
+                    Recommended Jobs (<span id="jobCount">0</span>)
+                </div>
+
+                <!-- Jobs Container -->
+                <div id="recommendedJobsContainer"></div>
+
+                <!-- Pagination -->
+                <div id="jobPagination" class="jobs-pagination"></div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-card resume-section">
+
+                <h5 class="mb-3">Resume</h5>
+
+                <!-- Existing Resume -->
+                <div class="current-resume gap-3 mb-3" id="currentResumeSection">
+
+                    <div class="resume-name" id="resumeFileName">
+
+                    </div>
+
+                    <button class="download-btn border-0" onclick="downloadMyResume()">
+                        <i class="bi bi-download px-2"></i> 
+                    </button>
+
+                </div>
+
+                <!-- Upload New Resume -->
+                <div class="upload-box mt-4">
+
+                    <input type="file" id="resumeInput" hidden>
+
+                    <div class="upload-content" id="resumeUploadBox"
+                        onclick="document.getElementById('resumeInput').click()">
+
+                        <div class="upload-icon">
+                            <i class="bi bi-file-earmark-arrow-up"></i>
+                        </div>
+
+                        <div class="fw-semibold mt-2" id="resumeActionText">
+                            Upload Resume
+                        </div>
+
+                        <div class="text-muted small mt-1">
+                            PDF, DOC, DOCX (Max 5MB)
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        /* SIDEBAR */
+
+        function openSidebar() {
+
+            document.getElementById("sidebar").classList.add("active");
+            document.getElementById("sidebarOverlay").classList.add("active");
+
+        }
+
+        function closeSidebar() {
+
+            document.getElementById("sidebar").classList.remove("active");
+            document.getElementById("sidebarOverlay").classList.remove("active");
+
+        }
+
+
+
+        /* SEARCH MODAL */
+
+        function openSearchModal() {
+
+            document.getElementById("searchOverlay").classList.add("active");
+
+        }
+
+        function outsideSearchClick(e) {
+
+            if (e.target.id === "searchOverlay") {
+
+                document.getElementById("searchOverlay").classList.remove("active");
+
+            }
+
+        }
+
+
+
+        /* PROFILE DROPDOWN */
+
+        function toggleProfileMenu(e) {
+
+            e.stopPropagation();
+
+            document
+                .getElementById("profileDropdown")
+                .classList.toggle("show");
+
+        }
+
+
+        /* CLOSE ON OUTSIDE CLICK */
+
+        document.addEventListener("click", function () {
+
+            document
+                .getElementById("profileDropdown")
+                .classList.remove("show");
+
+        });
+
+
+    </script>
+
+    <script src="../config.js"></script>
+    <script src="/assets/js/userHome.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script>
+        protectPage("JOB_SEEKER");
+    </script>
+
+    <script src="/assets/js/bootstrap.js"></script>
+</body>
+
+</html>

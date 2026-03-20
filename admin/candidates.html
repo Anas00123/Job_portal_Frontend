@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Candidates - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+    <style>
+        body {
+            margin: 0;
+            background-color: #f4f6f9;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: #0b2239;
+            color: #fff;
+            padding-top: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: #cfd8dc;
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #133b5c;
+            color: #fff;
+        }
+
+        .overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            top: 0;
+            left: 0;
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        @media(min-width: 992px) {
+            .sidebar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .admin-name-btn {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .admin-name-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast */
+        #toastContainer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-msg {
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            animation: fadeInUp 0.3s ease;
+            min-width: 240px;
+        }
+
+        .toast-msg.success {
+            background: #198754;
+        }
+
+        .toast-msg.error {
+            background: #dc3545;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar" id="sidebar">
+        <h4>Admin Panel</h4>
+        <a href="dashboard.html"><i class="fa fa-chart-line me-2"></i> Dashboard</a>
+        <a href="manageEmployers.html"><i class="fa fa-building me-2"></i> Employers</a>
+        <a href="candidates.html" class="active"><i class="fa fa-users me-2"></i> Candidates</a>
+        <a href="applications.html"><i class="fa fa-file-alt me-2"></i> Applications</a>
+        <a href="subAdmins.html"><i class="fa fa-shield me-2"></i> Sub Admins</a>
+        <a href="companies.html"><i class="fa fa-city me-2"></i> Companies</a>
+                  <a href="jobCategories.html" class="active">
+                <i class="bi bi-tags me-2"></i> Job Categories
+            </a>
+        <a href="#" onclick="logout()"><i class="fa fa-sign-out-alt me-2"></i> Logout</a>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4 rounded">
+            <div class="container-fluid">
+                <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <span class="navbar-brand mb-0 h4">Candidates</span>
+                <span class="admin-name-btn" onclick="openProfileModal()" id="adminName">Welcome, Admin</span>
+            </div>
+        </nav>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="card p-3">
+                    <h6>Total Candidates</h6>
+                    <h3 id="totalCandidates">—</h3>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card p-3">
+                    <h6>Active Candidates</h6>
+                    <h3 id="activeCandidates">—</h3>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <div class="card p-3">
+                    <h6>Blocked Candidates</h6>
+                    <h3 id="blockedCandidates">—</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4">
+            <h5 class="mb-3">All Candidates</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidateTableBody">
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>My Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                            style="width:60px;height:60px;font-size:24px;color:white;"><i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1" id="profileDisplayName">--</h5>
+                            <p class="text-muted mb-1" id="profileDisplayEmail">--</p>
+                            <span class="badge bg-success" id="profileDisplayRole">--</span>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs mb-3" id="profileTabs">
+                        <li class="nav-item"><a class="nav-link active" href="#"
+                                onclick="switchTab('editProfile',this)"><i class="bi bi-pencil me-1"></i> Edit
+                                Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('changePassword',this)"><i
+                                    class="bi bi-lock me-1"></i> Change Password</a></li>
+                    </ul>
+                    <div id="tab_editProfile">
+                        <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated successfully!
+                        </div>
+                        <div class="alert alert-danger d-none" id="editProfileError"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label fw-semibold">Full Name</label><input
+                                    type="text" class="form-control" id="p_fullname" /></div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Username</label><input
+                                    type="text" class="form-control" id="p_username" /></div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Email</label><input type="email"
+                                    class="form-control" id="p_email" disabled /><small class="text-muted">Email cannot
+                                    be changed</small></div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Phone</label><input
+                                    type="number" class="form-control" id="p_phone" /></div>
+                        </div>
+                        <div class="mt-3 text-end">
+                            <button class="btn btn-success" id="saveProfileBtn" onclick="saveProfile()">
+                                <span id="saveProfileText">Save Changes</span>
+                                <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="tab_changePassword" style="display:none;">
+                        <div class="alert alert-success d-none" id="changePwSuccess">Password changed successfully!
+                        </div>
+                        <div class="alert alert-danger d-none" id="changePwError"></div>
+                        <form onsubmit="return false;">
+                            <div class="mb-3"><label class="form-label fw-semibold">Current Password</label>
+                                <div class="input-group"><input type="password" class="form-control" id="p_currentPw"
+                                        placeholder="Enter current password" /><button class="btn btn-outline-secondary"
+                                        type="button" onclick="togglePw('p_currentPw',this)"><i
+                                            class="bi bi-eye"></i></button></div>
+                            </div>
+                            <div class="mb-3"><label class="form-label fw-semibold">New Password</label>
+                                <div class="input-group"><input type="password" class="form-control" id="p_newPw"
+                                        placeholder="Enter new password" /><button class="btn btn-outline-secondary"
+                                        type="button" onclick="togglePw('p_newPw',this)"><i
+                                            class="bi bi-eye"></i></button></div>
+                            </div>
+                            <div class="mb-3"><label class="form-label fw-semibold">Confirm New Password</label>
+                                <div class="input-group"><input type="password" class="form-control" id="p_confirmPw"
+                                        placeholder="Confirm new password" /><button class="btn btn-outline-secondary"
+                                        type="button" onclick="togglePw('p_confirmPw',this)"><i
+                                            class="bi bi-eye"></i></button></div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-warning" id="changePwBtn" type="button"
+                                    onclick="changePassword()">
+                                    <span id="changePwText">Change Password</span>
+                                    <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script>
+        protectAdminPage();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        if (!isLoggedIn()) window.location.href = "login.html";
+        document.getElementById("adminName").innerText = "Welcome, " + getAdminName();
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast-msg ${type}`;
+            toast.innerHTML = `
+        <i class="bi bi-${type === "success" ? "check-circle" : "exclamation-triangle"} me-2"></i>
+        ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        function setRowBusy(id, busy) {
+            document.querySelectorAll(`[data-cid="${id}"]`)
+                .forEach(btn => btn.disabled = busy);
+        }
+
+        function formatDate(d) {
+            return d ? new Date(d).toLocaleDateString("en-IN", {
+                day: "2-digit", month: "short", year: "numeric"
+            }) : "N/A";
+        }
+
+        // ── Load Candidates ──
+        document.addEventListener("DOMContentLoaded", loadCandidates);
+
+        async function loadCandidates() {
+            const tbody = document.getElementById("candidateTableBody");
+            try {
+                // ✅ fetchWithRefresh + .json()
+                const res = await fetchWithRefresh(`${API_BASE_URL}/admin/candidates`);
+                if (!res.ok) throw new Error(`Server error: ${res.status}`);
+                const raw = await res.json();
+                const data = Array.isArray(raw) ? raw : (raw.content || []);
+
+                document.getElementById("totalCandidates").textContent = data.length;
+                document.getElementById("activeCandidates").textContent =
+                    data.filter(c => c.userStatus === "ACTIVE").length;
+                document.getElementById("blockedCandidates").textContent =
+                    data.filter(c => c.userStatus === "SUSPENDED" ||
+                        c.userStatus === "INACTIVE").length;
+
+                if (!data.length) {
+                    tbody.innerHTML = `<tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                    No candidates found.
+                </td>
+            </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map((c, i) => {
+                    const isActive = c.userStatus === "ACTIVE";
+                    const statusCls = isActive ? "bg-success" : "bg-danger";
+                    return `<tr>
+                <td>${i + 1}</td>
+                <td>${c.fullName ?? "N/A"}</td>
+                <td>${c.email ?? "N/A"}</td>
+                <td>${c.phone ?? "N/A"}</td>
+                <td><span class="badge ${statusCls}">${c.userStatus ?? "N/A"}</span></td>
+                <td>${formatDate(c.createdAt)}</td>
+                <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                        <button class="btn btn-sm btn-outline-success"
+                                data-cid="${c.id}"
+                                onclick="activateCandidate(${c.id})"
+                                ${isActive ? "disabled" : ""}>
+                            <i class="bi bi-check-circle me-1"></i>Activate
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning"
+                                data-cid="${c.id}"
+                                onclick="deactivateCandidate(${c.id})"
+                                ${!isActive ? "disabled" : ""}>
+                            <i class="bi bi-slash-circle me-1"></i>Deactivate
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                data-cid="${c.id}"
+                                onclick="deleteCandidate(${c.id})">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+                }).join("");
+
+            } catch (err) {
+                console.error("Load candidates error:", err);
+                tbody.innerHTML = `<tr>
+            <td colspan="7" class="text-center text-danger py-4">
+                Failed to load candidates. Please refresh.
+            </td>
+        </tr>`;
+                ["totalCandidates", "activeCandidates", "blockedCandidates"]
+                    .forEach(id => document.getElementById(id).textContent = "—");
+            }
+        }
+
+        // ── Activate ──
+        async function activateCandidate(id) {
+            if (!confirm("Activate this candidate?")) return;
+            setRowBusy(id, true);
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/candidates/${id}/activate`,
+                    { method: "PATCH", body: JSON.stringify({}) }
+                );
+                if (!res.ok) throw new Error();
+                showToast("Candidate activated successfully ✓");
+                loadCandidates();
+            } catch {
+                showToast("Failed to activate candidate.", "error");
+                setRowBusy(id, false);
+            }
+        }
+
+        // ── Deactivate ──
+        async function deactivateCandidate(id) {
+            if (!confirm("Deactivate this candidate?")) return;
+            setRowBusy(id, true);
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/candidates/${id}/deactivate`,
+                    { method: "PATCH",
+                      Headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({}) }
+                );
+                if (!res.ok) throw new Error();
+                showToast("Candidate deactivated.", "success");
+                loadCandidates();
+            } catch {
+                showToast("Failed to deactivate candidate.", "error");
+                setRowBusy(id, false);
+            }
+        }
+
+        // ── Delete ──
+        async function deleteCandidate(id) {
+            if (!confirm("Delete this candidate? This cannot be undone.")) return;
+            setRowBusy(id, true);
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/candidates/${id}`,
+                    { method: "DELETE" }
+                );
+                if (!res.ok) throw new Error();
+                showToast("Candidate deleted.");
+                loadCandidates();
+            } catch {
+                showToast("Failed to delete candidate.", "error");
+                setRowBusy(id, false);
+            }
+        }
+
+        // ── Profile Modal ──
+        async function openProfileModal() {
+            switchTab("editProfile", document.querySelector("#profileTabs .nav-link"));
+            ["editProfileSuccess", "editProfileError", "changePwSuccess", "changePwError"]
+                .forEach(id => document.getElementById(id).classList.add("d-none"));
+            ["p_currentPw", "p_newPw", "p_confirmPw"]
+                .forEach(id => document.getElementById(id).value = "");
+
+            new bootstrap.Modal(document.getElementById("profileModal")).show();
+
+            try {
+                //  .json() on response
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/me`);
+                const data = await res.json();
+                const displayName = data.fullName || data.username || "Admin";
+
+                document.getElementById("profileDisplayName").innerText = displayName;
+                document.getElementById("profileDisplayEmail").innerText = data.username || "";
+                document.getElementById("profileDisplayRole").innerText = data.role || "ADMIN";
+                document.getElementById("p_fullname").value = data.fullName || "";
+                document.getElementById("p_username").value = data.username || "";
+                document.getElementById("p_email").value = data.username || "";
+                document.getElementById("p_phone").value = data.phone || "";
+                document.getElementById("adminName").innerText = "Welcome, " + displayName;
+                localStorage.setItem("fullName", displayName);
+            } catch (err) {
+                console.error("Failed to load profile:", err);
+            }
+        }
+
+        function switchTab(tabName, clickedLink) {
+            document.getElementById("tab_editProfile").style.display = "none";
+            document.getElementById("tab_changePassword").style.display = "none";
+            document.getElementById("tab_" + tabName).style.display = "block";
+            document.querySelectorAll("#profileTabs .nav-link")
+                .forEach(l => l.classList.remove("active"));
+            clickedLink.classList.add("active");
+        }
+
+        async function saveProfile() {
+            const fullname = document.getElementById("p_fullname").value.trim();
+            const username = document.getElementById("p_username").value.trim();
+            const phone = document.getElementById("p_phone").value.trim();
+            const successEl = document.getElementById("editProfileSuccess");
+            const errorEl = document.getElementById("editProfileError");
+            successEl.classList.add("d-none");
+            errorEl.classList.add("d-none");
+
+            const btn = document.getElementById("saveProfileBtn");
+            const btnText = document.getElementById("saveProfileText");
+            const spinner = document.getElementById("saveProfileSpinner");
+            btn.disabled = true; btnText.innerText = "Saving..."; spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/update-profile`, {
+                    method: "PUT",
+                    body: JSON.stringify({ fullname, username, phone: phone ? Number(phone) : null })
+                });
+                if (!res.ok) throw new Error("Failed to update profile");
+                successEl.classList.remove("d-none");
+                const displayName = fullname || username;
+                document.getElementById("profileDisplayName").innerText = displayName;
+                document.getElementById("adminName").innerText = "Welcome, " + displayName;
+                localStorage.setItem("fullName", displayName);
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to update profile.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false; btnText.innerText = "Save Changes"; spinner.classList.add("d-none");
+            }
+        }
+
+        async function changePassword() {
+            const currentPw = document.getElementById("p_currentPw").value.trim();
+            const newPw = document.getElementById("p_newPw").value.trim();
+            const confirmPw = document.getElementById("p_confirmPw").value.trim();
+            const successEl = document.getElementById("changePwSuccess");
+            const errorEl = document.getElementById("changePwError");
+            successEl.classList.add("d-none");
+            errorEl.classList.add("d-none");
+
+            if (!currentPw || !newPw || !confirmPw) {
+                errorEl.innerText = "Please fill all password fields.";
+                errorEl.classList.remove("d-none"); return;
+            }
+            if (newPw !== confirmPw) {
+                errorEl.innerText = "New passwords do not match.";
+                errorEl.classList.remove("d-none"); return;
+            }
+            if (newPw.length < 6) {
+                errorEl.innerText = "Password must be at least 6 characters.";
+                errorEl.classList.remove("d-none"); return;
+            }
+
+            const btn = document.getElementById("changePwBtn");
+            const btnText = document.getElementById("changePwText");
+            const spinner = document.getElementById("changePwSpinner");
+            btn.disabled = true; btnText.innerText = "Changing..."; spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/change-password`, {
+                    method: "POST",
+                    body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw })
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "Failed");
+                }
+                successEl.classList.remove("d-none");
+                ["p_currentPw", "p_newPw", "p_confirmPw"]
+                    .forEach(id => document.getElementById(id).value = "");
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to change password.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false; btnText.innerText = "Change Password"; spinner.classList.add("d-none");
+            }
+        }
+
+        function togglePw(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text"; btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            } else {
+                input.type = "password"; btn.innerHTML = '<i class="bi bi-eye"></i>';
+            }
+        }
+
+        function logout() { adminLogout(); }
+    </script>
+</body>
+
+</html>

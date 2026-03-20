@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - JobsHunt</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+
+    <!-- Reuse your navbar here -->
+
+    <div class="container py-5">
+
+        <h4 class="fw-bold mb-4">
+            <i class="bi bi-file-earmark-text me-2 text-cyan-color"></i>
+            My Applications
+        </h4>
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card text-center border-0 shadow-sm p-3">
+                    <div class="fs-4 fw-bold text-primary" id="countApplied">0</div>
+                    <div class="text-muted small">Applied</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center border-0 shadow-sm p-3">
+                    <div class="fs-4 fw-bold text-warning" id="countShortlisted">0</div>
+                    <div class="text-muted small">Shortlisted</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center border-0 shadow-sm p-3">
+                    <div class="fs-4 fw-bold text-success" id="countHired">0</div>
+                    <div class="text-muted small">Hired</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card text-center border-0 shadow-sm p-3">
+                    <div class="fs-4 fw-bold text-danger" id="countRejected">0</div>
+                    <div class="text-muted small">Rejected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Applied On</th>
+                                <th>Resume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="/assets/js/appliedJobs.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script>protectPage("JOB_SEEKER");</script>
+    <script src="/assets/js/bootstrap.js"></script>
+</body>
+
+</html>

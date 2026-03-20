@@ -1,0 +1,464 @@
+
+/* ================= THEME ================= */
+
+:root{
+--primary:#0d9488;
+--secondary:#0f172a;
+--light:#f1f5f9;
+--card:#ffffff;
+--border:#e2e8f0;
+}
+
+body{
+background:var(--light);
+font-family:system-ui;
+}
+
+
+/* ================= HEADER ================= */
+
+.header{
+background:white;
+padding:12px 30px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+
+.header-right{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.user-circle{
+width:35px;
+height:35px;
+border-radius:50%;
+background:var(--primary);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+
+/* ================= MAIN LAYOUT ================= */
+
+.main{
+padding:25px;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns: 280px 1fr 300px;
+gap:20px;
+}
+
+/* ================= NAVBAR ================= */
+
+.jobhunt-navbar{
+    background:#0f172a;
+    padding:12px 0;
+}
+
+.jobhunt-navbar .nav-link{
+    color:white;
+    font-weight:500;
+}
+
+.jobhunt-navbar .nav-link:hover{
+    color:#14b8a6;
+}
+
+
+/* LOGO */
+.logo-main{
+    color:white;
+}
+
+.logo-accent{
+    color:#14b8a6;
+}
+.dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0;
+}
+
+/* SEARCH BOX */
+.search-box{
+    display:flex;
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+}
+
+.search-box input{
+    border:none;
+    padding:6px 12px;
+    outline:none;
+}
+
+.search-box button{
+    background:#14b8a6;
+    border:none;
+    color:white;
+    padding:6px 12px;
+}
+
+
+/* PROFILE */
+.profile-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    color:white;
+}
+
+.profile-circle{
+    width:35px;
+    height:35px;
+    background:#14b8a6;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+
+/* PROFILE DROPDOWN */
+.profile-menu{
+    min-width:180px;
+}
+
+
+/* ================= MEGA DROPDOWN ================= */
+
+.jobs-mega{
+    width:600px;
+    padding:20px;
+}
+
+.jobs-mega h6{
+    font-weight:bold;
+}
+
+.jobs-mega .dropdown-item{
+    padding:4px 0;
+}
+/* ================= PROFILE CARD ================= */
+
+.profile-card{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+border:1px solid var(--border);
+}
+
+.profile-ring{
+width:90px;
+height:90px;
+border-radius:50%;
+border:6px solid var(--primary);
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+font-size:24px;
+font-weight:bold;
+color:var(--secondary);
+margin-bottom:10px;
+}
+
+.profile-name{
+font-weight:600;
+}
+
+.update-btn{
+background:var(--primary);
+color:white;
+border:none;
+padding:6px 15px;
+border-radius:20px;
+margin-top:10px;
+}
+
+
+/* ================= JOB CARD ================= */
+
+.section-title{
+font-weight:600;
+margin-bottom:15px;
+}
+
+.job-card{
+background:white;
+padding:18px;
+border-radius:12px;
+border:1px solid var(--border);
+margin-bottom:15px;
+}
+
+.job-title{
+font-weight:600;
+}
+
+.job-company{
+color:gray;
+font-size:14px;
+}
+
+.job-tags span{
+background:#ecfeff;
+color:var(--primary);
+padding:3px 10px;
+border-radius:15px;
+font-size:12px;
+margin-right:5px;
+}
+
+.apply-btn{
+border:1px solid var(--primary);
+color:var(--primary);
+background:none;
+padding:5px 15px;
+border-radius:20px;
+}
+
+.apply-btn:hover{
+background:var(--primary);
+color:white;
+}
+
+
+/* ================= RIGHT CARD ================= */
+
+.right-card{
+background:white;
+padding:20px;
+border-radius:12px;
+border:1px solid var(--border);
+}
+
+.resume-btn{
+background:var(--primary);
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:20px;
+width:100%;
+}
+
+.jh-sidebar,.jh-search-overlay{
+    display: none;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:992px){
+
+.dashboard{
+grid-template-columns:1fr;
+}
+.jobhunt-navbar{
+    display: none;
+}
+.jh-sidebar,.jh-search-overlay{
+    display: block;
+}
+
+}
+
+
+/* hide on desktop */
+.jh-mobile-navbar{
+display:none;
+}
+
+
+/* ================= MOBILE ONLY ================= */
+
+@media(max-width:768px){
+
+.jh-mobile-navbar{
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:#0f172a;
+padding:10px;
+position:sticky;
+top:0;
+z-index:1000;
+
+}
+
+/* toggle */
+.jh-toggle-btn{
+color:white;
+font-size:26px;
+cursor:pointer;
+}
+
+/* search */
+.jh-mobile-search{
+
+flex:1;
+margin:0 10px;
+background:white;
+border-radius:20px;
+padding:6px 10px;
+display:flex;
+align-items:center;
+gap:8px;
+cursor:pointer;
+
+}
+
+.jh-mobile-search input{
+
+border:none;
+outline:none;
+width:100%;
+cursor:pointer;
+
+}
+
+/* profile */
+.jh-avatar{
+
+width:34px;
+height:34px;
+background:#14b8a6;
+border-radius:50%;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+
+}
+
+
+/* profile dropdown */
+
+.jh-profile-wrapper{
+position:relative;
+}
+
+.jh-profile-dropdown{
+
+position:absolute;
+right:0;
+top:45px;
+background:white;
+width:180px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.2);
+display:none;
+
+}
+
+.jh-profile-dropdown.show{
+display:block;
+}
+
+.jh-profile-dropdown div{
+
+padding:10px;
+cursor:pointer;
+
+}
+
+.jh-profile-dropdown div:hover{
+background:#f1f5f9;
+}
+
+
+/* sidebar */
+
+.jh-overlay{
+
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+top:0;
+
+}
+
+.jh-overlay.active{
+display:block;
+}
+
+.jh-sidebar{
+
+position:fixed;
+left:-260px;
+top:0;
+width:260px;
+height:100%;
+background:white;
+transition:.3s;
+padding:20px;
+z-index:1001;
+
+}
+
+.jh-sidebar.active{
+left:0;
+}
+
+
+/* search modal */
+
+.jh-search-overlay{
+
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+align-items:flex-start;
+justify-content:center;
+padding-top:60px;
+z-index:1002;
+
+}
+
+.jh-search-overlay.active{
+display:flex;
+}
+
+.jh-search-modal{
+
+background:white;
+width:90%;
+border-radius:12px;
+padding:15px;
+
+}
+
+.jh-search-modal input{
+
+width:100%;
+padding:10px;
+margin-bottom:10px;
+
+}
+
+.jh-search-filters div{
+
+padding:10px;
+border-bottom:1px solid #eee;
+
+}
+
+}

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - JobsHunt</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+
+    <style>
+        body {
+            background: #f4f7fb;
+        }
+
+        .job-header {
+            background: #0b2239;
+            color: white;
+            padding: 40px 30px;
+            border-radius: 10px;
+        }
+
+        .job-header h3 {
+            font-weight: 600;
+        }
+
+        .job-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .apply-btn {
+            background: #1bb39a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-btn:hover {
+            background: #159a85;
+            color: white;
+        }
+
+        .apply-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .sidebar-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-OPEN {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-CLOSED {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* Skeleton loader */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton.tall {
+            height: 40px;
+        }
+
+        .skeleton.short {
+            width: 60%;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .job-header {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <section class="position-sticky fixed-top bg-grey-color shadow-sm rounded">
+        <div id="header"></div>
+    </section>
+
+    <div class="container mt-5 pt-3 pb-5">
+
+        <!-- ✅ Skeleton shown while loading -->
+        <div id="skeletonLoader">
+            <div class="job-header mb-4">
+                <div class="skeleton tall"></div>
+                <div class="skeleton short"></div>
+                <div class="skeleton short"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="job-card">
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton short"></div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton short"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sidebar-card">
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Actual content (hidden until loaded) -->
+        <div id="jobContent" style="display:none;">
+
+            <!-- Job Header -->
+            <div class="job-header mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <span class="status-badge mb-2 d-inline-block" id="jobStatus"></span>
+                        <h3 id="jobTitle">-</h3>
+                        <p class="mb-1">
+                            <i class="bi bi-building me-1"></i>
+                            <span id="jobCompany">-</span>
+                        </p>
+                        <p class="mb-1">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <span id="jobLocation">-</span>
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-tag me-1"></i>
+                            <span id="jobCategory">-</span>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <h5 id="jobSalaryHeader">-</h5>
+                        <p class="mb-2 opacity-75" id="jobPostedHeader">-</p>
+                        <button class="apply-btn mt-2" id="applyBtnTop" onclick="handleApply()">
+                            Apply Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <!-- Left Section -->
+                <div class="col-lg-8">
+                    <div class="job-card">
+                        <h5>Job Description</h5>
+                        <p id="jobDescription" class="text-muted">-</p>
+
+                        <div id="responsibilitiesSection" style="display:none;">
+                            <h5 class="mt-4">Responsibilities</h5>
+                            <ul id="jobResponsibilities"></ul>
+                        </div>
+
+                        <div id="requirementsSection" style="display:none;">
+                            <h5 class="mt-4">Requirements</h5>
+                            <ul id="jobRequirements"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sidebar-card">
+                        <h6>Job Overview</h6>
+                        <hr>
+                        <p><strong>Job Title:</strong>
+                            <span id="sideJobTitle">-</span>
+                        </p>
+                        <p><strong>Company:</strong>
+                            <span id="sideCompany">-</span>
+                        </p>
+                        <p><strong>Salary:</strong>
+                            <span id="sideJobSalary">-</span>
+                        </p>
+                        <p><strong>Location:</strong>
+                            <span id="sideJobLocation">-</span>
+                        </p>
+                        <p><strong>Category:</strong>
+                            <span id="sideJobCategory">-</span>
+                        </p>
+                        <p><strong>Status:</strong>
+                            <span id="sideJobStatus">-</span>
+                        </p>
+                        <p><strong>Posted:</strong>
+                            <span id="sideJobPosted">-</span>
+                        </p>
+                        <button class="apply-btn w-100 mt-2" id="applyBtnSide" onclick="handleApply()">
+                            Apply Now
+                        </button>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h6>Company Information</h6>
+                        <hr>
+                        <p><strong id="companyName">-</strong></p>
+                        <p class="text-muted" id="companyDescription">-</p>
+                        <p>
+                            <i class="bi bi-geo-alt me-1 text-primary"></i>
+                            <span id="companyCity">-</span>
+                        </p>
+                        <button class="my-btn" id="viewCompanyBtn">
+                            <i class="bi bi-building me-1"></i>
+                            View All Jobs at this Company
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--  Error state -->
+        <div id="errorState" style="display:none;" class="text-center py-5">
+            <i class="bi bi-exclamation-circle fs-1 text-danger d-block mb-3"></i>
+            <h5>Job not found</h5>
+            <p class="text-muted">This job may have been removed or doesn't exist.</p>
+            <a href="/jobs.html" class="btn btn-primary">Browse All Jobs</a>
+        </div>
+
+    </div>
+
+    <!--  Apply Confirm Modal -->
+    <div class="modal fade" id="applyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Application</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You are applying for:</p>
+                    <h6 class="text-primary" id="modalJobTitle">-</h6>
+                    <p class="text-muted mt-2">
+                        <i class="bi bi-building me-1"></i>
+                        <span id="modalCompany">-</span>
+                    </p>
+                    <p class="text-muted small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Your saved resume will be submitted automatically.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" onclick="confirmApply()">
+                        <i class="bi bi-send me-1"></i> Confirm Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Login Required Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Login Required</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-lock-fill fs-1 text-warning mb-3 d-block"></i>
+                    <h5>Please login to apply</h5>
+                    <p class="text-muted">
+                        You need to be logged in as a Job Seeker to apply for jobs.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="button_sl" onclick="redirectToLogin()">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Already Applied Modal -->
+    <div class="modal fade" id="alreadyAppliedModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Already Applied</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-check-circle-fill fs-1 text-success mb-3 d-block"></i>
+                    <h5>You've already applied!</h5>
+                    <p class="text-muted">
+                        You have already submitted an application for this job.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+    <script src="../config.js"></script>
+
+    <script>
+
+        const params = new URLSearchParams(window.location.search);
+        const jobId = params.get("id");
+
+        // let isLoggedIn = false;
+        let currentJob = null;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (!jobId) {
+                showError();
+                return;
+            }
+            await checkAuth();
+            await loadJobDetail();
+        });
+
+        // ✅ Check login status (don't redirect — just set flag)
+        async function checkAuth() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/me`, {
+                    credentials: "include"
+                });
+
+                if (res.ok) {
+                    const user = await res.json();
+                    isLoggedIn = user.role === "JOB_SEEKER";
+                }
+            } catch {
+                isLoggedIn = false;
+            }
+        }
+
+        //  Load job details
+        async function loadJobDetail() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/jobs/${jobId}`, {
+                    credentials: "include"
+                });
+
+                if (!res.ok) { showError(); return; }
+
+                currentJob = await res.json();
+                renderJob(currentJob);
+
+            } catch (err) {
+                console.error("Job detail error:", err);
+                showError();
+            }
+        }
+
+        //  Render all job data
+        function renderJob(job) {
+            // Header
+            const statusEl = document.getElementById("jobStatus");
+            statusEl.innerText = job.status;
+            statusEl.className = `status-badge status-${job.status}`;
+
+            document.getElementById("jobTitle").innerText = job.title;
+            document.getElementById("jobCompany").innerText = job.companyName || "-";
+            document.getElementById("jobLocation").innerText = job.location || "-";
+            document.getElementById("jobCategory").innerText = job.categoryName || "-";
+
+            document.getElementById("jobSalaryHeader").innerText =
+                job.salary ? `₹${job.salary.toLocaleString()}` : "Salary not disclosed";
+
+            document.getElementById("jobPostedHeader").innerText =
+                `Posted: ${formatDate(job.createdAt)}`;
+
+            // Description
+            document.getElementById("jobDescription").innerHTML =
+                job.description || "No description available.";
+
+            // Sidebar
+            document.getElementById("sideJobTitle").innerText = job.title;
+            document.getElementById("sideCompany").innerText = job.companyName || "-";
+            document.getElementById("sideJobSalary").innerText =
+                job.salary ? `₹${job.salary.toLocaleString()}` : "Not disclosed";
+            document.getElementById("sideJobLocation").innerText = job.location || "-";
+            document.getElementById("sideJobCategory").innerText = job.categoryName || "-";
+            document.getElementById("sideJobStatus").innerText = job.status;
+            document.getElementById("sideJobPosted").innerText = formatDate(job.createdAt);
+
+            console.log("Job :", job);
+            // Company info
+            document.getElementById("companyName").innerText = job.companyName || "-";
+            document.getElementById("companyDescription").innerText = job.companyDescription || "-";
+            document.getElementById("companyCity").innerText = job.city || "-";
+
+            //  View all company jobs button
+            document.getElementById("viewCompanyBtn").onclick = () => {
+                window.location.href =
+                    `../companyJobs.html?id=${job.companyId}&name=${encodeURIComponent(job.companyName)}`;
+            };
+
+            //  Disable apply if job is closed
+            if (job.status === "CLOSED") {
+                document.getElementById("applyBtnTop").disabled = true;
+                document.getElementById("applyBtnTop").innerText = "Job Closed";
+                document.getElementById("applyBtnSide").disabled = true;
+                document.getElementById("applyBtnSide").innerText = "Job Closed";
+            }
+
+            //  Update modal
+            document.getElementById("modalJobTitle").innerText = job.title;
+            document.getElementById("modalCompany").innerText = job.companyName || "-";
+
+            // Show content, hide skeleton
+            document.getElementById("skeletonLoader").style.display = "none";
+            document.getElementById("jobContent").style.display = "block";
+
+            // Update page title
+            document.title = `${job.title} - JobsHunt`;
+        }
+
+        //  Handle apply click
+        function handleApply() {
+            if (currentJob?.status === "CLOSED") return;
+            console.log(currentJob);
+
+            if (!isLoggedIn) {
+                new bootstrap.Modal(
+                    document.getElementById("loginModal")
+                ).show();
+                return;
+            }
+
+            new bootstrap.Modal(
+                document.getElementById("applyModal")
+            ).show();
+        }
+
+        //  Confirm apply
+        async function confirmApply() {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/applications/apply/${jobId}`,
+                    {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }
+                );
+
+                bootstrap.Modal
+                    .getInstance(document.getElementById("applyModal"))
+                    .hide();
+
+                if (response.ok) {
+                    showToast("Applied successfully! 🎉", "success");
+                    //  Disable button after apply
+                    document.getElementById("applyBtnTop").disabled = true;
+                    document.getElementById("applyBtnTop").innerText = "Applied ✓";
+                    document.getElementById("applyBtnSide").disabled = true;
+                    document.getElementById("applyBtnSide").innerText = "Applied ✓";
+
+                } else if (response.status === 409) {
+                    new bootstrap.Modal(
+                        document.getElementById("alreadyAppliedModal")
+                    ).show();
+                } else if(response.status === 400){
+                     const data = await response.json();
+                     showToast(data.message || "Failed to apply. Please try again.", "danger");
+                } else {
+                   
+                    showToast("Already applied for this job.", "danger");
+                }
+
+            } catch (err) {
+                console.error("Apply error:", err);
+                showToast("Something went wrong", "danger");
+            }
+        }
+
+        //  Redirect to login — save current page
+        function redirectToLogin() {
+            sessionStorage.setItem("redirectAfterLogin", window.location.href);
+            window.location.href = "../user/loginForm.html";
+        }
+
+        //  Show error state
+        function showError() {
+            document.getElementById("skeletonLoader").style.display = "none";
+            document.getElementById("jobContent").style.display = "none";
+            document.getElementById("errorState").style.display = "block";
+        }
+
+        //  Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return "-";
+            return new Date(dateStr).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        //  Toast notification
+        function showToast(message, type = "success") {
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = `
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+                    <div class="toast show align-items-center text-white bg-${type} border-0">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button"
+                                    class="btn-close btn-close-white me-2 m-auto"
+                                    data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(wrapper);
+            setTimeout(() => wrapper.remove(), 3500);
+        }
+    </script>
+
+</body>
+
+</html>

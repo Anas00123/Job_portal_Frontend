@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #0d1b2a;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .sidebar a {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background: #1b263b;
+            color: white;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -250px;
+        }
+
+        .content.expanded {
+            margin-left: 0;
+        }
+
+        @media(max-width: 991px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <h4 class="text-center py-3">Admin Panel</h4>
+    <a href="dashboard.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+    <!-- <a href="manageJobs.html"><i class="bi bi-briefcase me-2"></i>Manage Jobs</a> -->
+    <a href="manageEmployers.html"><i class="bi bi-building me-2"></i>Employers</a>
+    <a href="candidates.html"><i class="bi bi-people me-2"></i>Candidates</a>
+    <a href="applications.html"><i class="bi bi-file-earmark-text me-2"></i>Applications</a>
+    <a href="settings.html" class="bg-secondary text-white"><i class="bi bi-gear me-2"></i>Settings</a>
+    <a href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+</div>
+
+<!-- Content -->
+<div class="content" id="content">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm rounded mb-4">
+        <div class="container-fluid">
+            <button class="btn btn-outline-dark d-lg-none" id="toggleBtn">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="navbar-brand mb-0 h5">Settings</span>
+            <div class="d-flex align-items-center">
+                <span class="me-2">Welcome, Admin</span>
+                <img src="/assets/images/testimonial3.jfif" class="rounded-circle" width="35">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Settings Cards -->
+    <div class="row g-4">
+
+        <!-- Profile Settings -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    Profile Settings
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" value="Admin Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="admin@example.com">
+                        </div>
+                        <button class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    Change Password
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control">
+                        </div>
+                        <button class="btn btn-danger">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    Notification Settings
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Email Notifications</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">SMS Notifications</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Settings -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    System Settings
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Site Title</label>
+                        <input type="text" class="form-control" value="Job Portal Admin">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Default Language</label>
+                        <select class="form-select">
+                            <option>English</option>
+                            <option>Hindi</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+
+<script src="/assets/js/bootstrap.js"></script>
+<script src="/assets/js/script.js"></script>
+
+
+
+
+
+<script>
+    const toggleBtn = document.getElementById("toggleBtn");
+    const sidebar = document.getElementById("sidebar");
+
+    toggleBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("active");
+    });
+</script>
+
+</body>
+</html>

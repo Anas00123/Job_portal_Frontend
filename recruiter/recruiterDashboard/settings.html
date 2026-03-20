@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recruiter Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            background: #f4f6f9;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #0b2a45;
+            min-height: 100vh;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #183c63;
+            color: #fff;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Cards */
+        .setting-card {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            background: #fff;
+            margin-bottom: 25px;
+        }
+
+
+        /* Responsive Sidebar */
+        @media(max-width:991px) {
+            .sidebar {
+                position: fixed;
+                width: 260px;
+                left: -260px;
+                top: 0;
+                z-index: 1000;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+        }
+
+        #toggleBtn {
+            width: 50px;
+            /* increase width */
+            height: 40px;
+            /* optional: adjust height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #toggleBtn:hover {
+
+            background-color: #18a99c;
+            border-color: #18a99c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-lg-2 sidebar p-4" id="sidebar">
+                <h5 class="mb-4">Recruiter Panel</h5>
+                <a href="recruiterDashboard.html">Dashboard</a>
+                <a href="jobs.html">Jobs</a>
+                <a href="applications.html">Applications</a>
+                <a href="interviews.html">Interviews</a>
+                <a href="offers.html">Offers</a>
+                <a href="reports.html">Reports</a>
+                <a href="settings.html" class="active">Settings</a>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 p-0">
+
+                <!-- Topbar -->
+                <div class="topbar d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-outline-dark d-lg-none" id="toggleBtn">
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <h5 class="mb-0">Reports</h5>
+                    </div>
+                    <button class="btn btn-teal">Export Report</button>
+                </div>
+
+                <!-- Profile Settings -->
+                <div class="setting-card">
+                    <h6 class="mb-4">Profile Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" placeholder="Arun Kumar">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" placeholder="arun@gmail.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" placeholder="+91 9876543210">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Designation</label>
+                            <input type="text" class="form-control" placeholder="HR Manager">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Company Settings -->
+                <div class="setting-card">
+                    <h6 class="mb-4">Company Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-control" placeholder="Tech Solutions Pvt Ltd">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Company Website</label>
+                            <input type="text" class="form-control" placeholder="www.company.com">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Company Address</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="setting-card">
+                    <h6 class="mb-4">Notification Preferences</h6>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Email Notification for New Applications</label>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Interview Reminder Alerts</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Monthly Performance Report</label>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="setting-card">
+                    <h6 class="mb-4">Security Settings</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-outline-danger">Deactivate Account</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="/assets/js/bootstrap.js"></script>
+
+    <!-- Toggle JS -->
+    <script src="/assets/js/recruiterDashbord.js"></script>
+
+
+    </script>
+
+</body>
+
+</html>

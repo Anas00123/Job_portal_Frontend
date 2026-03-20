@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobsHunt - Find Your Dream Job</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/icons_LOGO.png">
+
+</head>
+
+<body class="bg-white"><!-- ----------------------Header Starts----------------------------------- -->
+    <section class="  bg-grey-color shadow-sm rounded">
+        <div id="header"></div>
+    </section>
+    <!-- ----------------------Header Ends----------------------------------- -->
+
+
+    <section class="register-form-section">
+
+        <div class="d-flex align-items-center justify-content-center  position-relative z-3 py-5">
+            <div class="container">
+                <div class="wrapper glass-card rounded-5">
+                    <div id="message"></div>
+
+                    <form id="registerForm" class="d-flex flex-column gap-3">
+                        <h1 class="text-center text-white mb-3">Register Yourself </h1>
+                        <div class="d-flex flex-column ">
+
+
+                            <div class="row g-4 mb-3">
+                                <div class="col-6 input-field">
+                                    <input id="fullName" type="text" required>
+                                    <label class="">Full Name</label>
+                                </div>
+
+
+                                <div class="col-6 input-field">
+                                    <input id="username" type="text" class="" required>
+                                    <label>Username</label>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-3">
+                                <div class="col-md-6 input-field">
+                                    <input id="email" type="email" required>
+                                    <label>Email</label>
+                                </div>
+
+                                <div class="col-md-6 input-field mb-3">
+                                    <input id="phone" type="tel" required>
+                                    <label>Phone Number</label>
+                                </div>
+
+
+
+                            </div>
+
+
+
+                            <div class="row g-4  mb-3">
+                                <div class="col-md-6 input-field password-field">
+                                    <input id="password" type="password" required>
+                                    <label>Password</label>
+                                    <div class="glass-eye toggle-password" data-target="password">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-md-6 input-field password-field">
+                                    <input id="confirmPassword" type="password" required>
+                                    <label>Confirm Password</label>
+
+                                    <div class="glass-eye toggle-password" data-target="confirmPassword">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <small id="passwordError" class="text-danger col-md-6"></small>
+                                <small id="confirmError" class="text-danger col-md-6"></small>
+
+                            </div>
+                            <div class="glass-checkbox my-3">
+                                <input type="checkbox" id="terms" required>
+                                <label for="terms">I agree to the Terms & Conditions</label>
+                            </div>
+                            <!-- Button -->
+                            <div
+                                class="d-flex  flex-column flex-sm-row gap-3 align-items-center justify-content-center mb-3">
+                                <button type="submit" id="registerBtn" class="btn btn-teal px-4 rounded-3">
+                                    Register
+                                </button>
+
+                                <div class="text-center text-white">
+                                    Don't have an account?
+                                    <a href="loginForm.html" class=" ms-1  ">
+                                        Login
+                                    </a>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+    <!-- ---------Footer Page starts------------- -->
+    <div id="footer"></div>
+    <!-- ---------Footer Page ends------------- -->
+
+    <script src="../config.js"></script>
+    <script src="/assets/js/pages/registerPage.js"></script>
+    <script src="/assets/js/auth.js"></script>
+
+
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+</body>
+
+</html>

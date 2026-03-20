@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Login Page</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/icons_LOGO.png">
+
+    <style>
+        .recruiter-login-main-section {
+            min-height: 100vh;
+            background-image: url("/assets/images/recruiter-login.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .recruiter-login-main-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- ----------------------Header Starts----------------------------------- -->
+    <section class="position-sticky fixed-top  bg-grey-color shadow-sm rounded">
+        <div id="recruiter-header"></div>
+    </section>
+    <!-- ----------------------Header Ends----------------------------------- -->
+
+    <!-- Login form Section Strats Here  -->
+
+    <!-- ----------------------Login section Starts----------------------------------- -->
+    <section class="recruiter-login-main-section d-flex align-items-center justify-content-center min-vh-100">
+        <div class="login-card glass-card position-relative z-3 rounded-5">
+            <h3 class="text-center text-white mb-4">Login Here</h3>
+
+            <form id="loginForm">
+                <div id="errorLoginMessage"></div>
+                <div id="tokenMessage"></div>
+                <!-- Email -->
+                <div class="input-field">
+                    <input type="text" id="username" required>
+                    <label>Email Or Username</label>
+                </div>
+                <div class="input-field password-field">
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                    <div class="glass-eye toggle-password" data-target="password">
+                        <i class="bi bi-eye-slash"></i>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <label class="glass-checkbox">
+                        <input type="checkbox">
+                        Remember me
+                    </label>
+
+                    <small>
+                        <a href="#" class="text-white text-decoration-none">
+                            Forgot password?
+                        </a>
+                    </small>
+                </div>
+
+                <!-- Button -->
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-teal">
+                        Log In
+                    </button>
+                </div>
+
+                <!-- Register -->
+                <div class="text-center text-white">
+                    Don't have an account?
+                    <a href="/recruiter/recruiterRegister.html" class=" ms-1 py-2 px-4">
+                        Register
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+
+    <!-- Login form Section Ends Here  -->
+
+
+
+    <!-- ---------Footer Page starts------------- -->
+    <div id="footer"></div>
+    <!-- ---------Footer Page ends------------- -->
+
+    <script src="../config.js"></script>
+    <script src="/assets/js/pages/universalLogin.js"></script>
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+</body>
+
+</html>

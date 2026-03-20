@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobsHunt - Find Your Dream Job</title>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+    integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+
+  <style>
+    .company-slider-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .company-slider {
+      display: flex;
+      gap: 20px;
+      transition: transform 0.4s ease;
+      padding: 10px 0;
+    }
+
+    .company-card {
+      min-width: 180px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .company-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border-color: #0d6efd;
+    }
+
+    .company-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #e9f0ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 24px;
+      font-weight: bold;
+      
+    }
+
+    .company-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .company-city {
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .slider-btn:hover {
+      background: #0d6efd;
+      color: #fff;
+    }
+
+    .slider-btn.left {
+      left: -15px;
+    }
+
+    .slider-btn.right {
+      right: -15px;
+    }
+
+
+    
+  </style>
+
+</head>
+
+<body>
+  <!-- ----------------------Header Starts----------------------------------- -->
+  <section class="position-sticky  fixed-top  bg-grey-color shadow-sm rounded">
+    <div id="header"></div>
+  </section>
+  <!-- ----------------------Header Ends----------------------------------- -->
+
+
+
+  <!-- ----------------------Hero Section Starts----------------------------------- -->
+
+  <section class="container-fluid bg-blue-color text-white py-5">
+    <div class="">
+      <div class="row g-4 d-flex align-items-center justify-content-center py-4">
+        <div class="col-lg-7  col-12">
+          <div class=" d-flex flex-column gap-3">
+
+            <h1 class="fw-bold syne-font display-6 text-center">
+              Build Your <br> Career With
+              <span id="changing-word"></span>
+            </h1>
+            <h1 class="fs-2 syne-font text-center"><span class="text-cyan-color">Search</span> Smart. <span
+                class="text-cyan-color">Get</span> Hired Fast.
+            </h1>
+            <div class="container-fluid">
+
+             
+                <div class="hero-search-bar">
+                  <!-- Search & Filter Bar -->
+                  <div class="jobs-search-bar">
+                    <div class="search-field">
+                      <i class="bi bi-search search-icon"></i>
+                      <input type="text" id="searchTitle" placeholder="Job title, skills...">
+                    </div>
+                    <div class="search-field">
+                      <i class="bi bi-geo-alt search-icon"></i>
+                      <input type="text" id="searchLocation" placeholder="Location...">
+                    </div>
+                    <div class="search-field">
+                      <i class="bi bi-tag search-icon"></i>
+                      <input type="text" id="searchCategory" placeholder="Category...">
+                    </div>
+                    <button class="search-btn" onclick="goToJobsPage()">
+                      Search
+                    </button>
+                  </div>
+
+                </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-5 ">
+          <div class="p-2 rounded-5 bg-white" style="border: 1px solid black;">
+            <img src="./assets/images/hero-index-img.jpg" class="img-fluid img-hero-index rounded-5 shadow rounded"
+              alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- ----------------------Hero Section Ends----------------------------------- -->
+
+
+
+
+
+
+  <!-- ----------------------How Job Hunt Starts----------------------------------- -->
+
+  <section class="py-5 ">
+
+    <div class="container text-center">
+
+      <h2 class="fw-bold mb-2 syne-font display-6">How JobsHunt Works</h2>
+      <p class="text-muted mb-5 inter-font fs-5">Find your dream job in just three simple steps</p>
+
+      <div class="row g-4 pb-4 bg-blue-color rounded px-2">
+
+        <!-- STEP 1 -->
+        <div class="col-md-4">
+          <div class="bg-white p-4 shadow-sm rounded h-100">
+
+            <div class="mb-3">
+              <i class="bi bi-person-circle fs-1 text-blue-color"></i>
+            </div>
+
+            <h5 class="syne-font">Create Your Profile</h5>
+            <p class="text-muted inter-font">Sign up and build your professional profile.</p>
+
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="col-md-4">
+          <div class="bg-white p-4 shadow-sm rounded h-100">
+
+            <div class="mb-3">
+              <i class="bi bi-search fs-1 text-blue-color"></i>
+            </div>
+
+            <h5 class="syne-font">Search Jobs</h5>
+            <p class="text-muted inter-font">Explore thousands of verified job openings.</p>
+
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="col-md-4">
+          <div class="bg-white p-4 shadow-sm rounded h-100">
+
+            <div class="mb-3">
+              <i class="bi bi-briefcase fs-1 text-blue-color "></i>
+            </div>
+
+            <h5 class="syne-font">Get Hired</h5>
+            <p class="text-muted inter-font">Apply easily and start your career journey.</p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+  <!-- ----------------------How Job Hunt Ends hero----------------------------------- -->
+
+
+
+  <!-- ----------------------Top Companies Hiring Starts----------------------------------- -->
+
+  <!-- Company Slider Section -->
+  <section class="py-5 bg-light"  id="companies">
+    <div class="container">
+      <h4 class="fw-bold mb-4 text-center">
+        <i class="bi bi-building me-2 text-cyan-color"></i>
+        Top Hiring Companies
+      </h4>
+
+      <div class="company-slider-wrapper px-4">
+        <!-- Left Arrow -->
+        <button class="slider-btn left" onclick="slideLeft()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <!-- Slider -->
+        <div class="company-slider" id="companySlider"></div>
+
+        <!-- Right Arrow -->
+        <button class="slider-btn right" onclick="slideRight()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="py-5 bg-blue-color">
+
+    <div class="container text-center">
+
+      <h2 class="fw-bold mb-2 display-5 text-white syne-font">Why Choose Jobs<span class="text-cyan-color">Hunt</span>
+      </h2>
+      <p class=" mb-5 fs-5 inter-font text-white">Your trusted partner in career growth</p>
+
+      <div class="row g-4">
+
+        <!-- CARD -->
+        <div class="col-md-3">
+          <div class="bg-white p-4 rounded shadow-sm choose-card h-100">
+
+            <i class="bi bi-shield-check display-4 text-cyan-color  mb-3"></i>
+            <h5 class="syne-font fs-5 fw-bold">Verified Employers</h5>
+            <p class="inter-font">Apply only to trusted and genuine companies.</p>
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="bg-white p-4 rounded shadow-sm choose-card h-100">
+
+            <i class="bi bi-lightning display-4 text-cyan-color mb-3"></i>
+            <h5 class="syne-font fs-5 fw-bold">Easy Apply</h5>
+            <p class="inter-font">Apply to jobs with just a single click.</p>
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="bg-white p-4 rounded shadow-sm choose-card h-100">
+
+            <i class="bi bi-graph-up display-4 text-cyan-color mb-3"></i>
+            <h5 class="syne-font fs-5 fw-bold">Career Growth</h5>
+            <p class="inter-font">Opportunities that match your skills.</p>
+
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="bg-white p-4 rounded shadow-sm choose-card h-100">
+
+            <i class="bi bi-headset display-4 text-cyan-color mb-3"></i>
+            <h5 class="syne-font fs-5 fw-bold">24/7 Support</h5>
+            <p class="inter-font">We're here whenever you need help.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- -------------Top Job Openings in Your City Starts here-------------- -->
+
+  <section class="city-section py-5">
+    <div class="container text-center">
+
+      <h2 class="syne-font mb-5 display-6 fw-bold ">Top Job Openings in Your City</h2>
+
+      <div class="row g-3 justify-content-center city-scroll">
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/mumbai.png">
+            <p class="inter-font">Mumbai</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/chennai.png">
+            <p class="inter-font">Chennai</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/bengaluru.png">
+            <p class="inter-font">Bangalore</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/hyderabad.png">
+            <p class="inter-font">Hyderabad</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/kolkata.png">
+            <p class="inter-font">Kolkata</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/delhi-ncr.png">
+            <p class="inter-font">Delhi</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="city-card">
+            <img src="./assets/images/ahmedabad.png">
+            <p class="inter-font">Ahmedabad</p>
+          </div>
+        </div>
+
+
+
+      </div>
+
+      <button class="my-btn mt-4">View All</button>
+
+    </div>
+  </section>
+
+  <!-- -------------Top Job Openings in Your City Ends here-------------- -->
+
+
+
+
+  <!-- ----------------Background Image index section--------------------- -->
+  <section class="container-fluid">
+
+    <div>
+      <img src="./assets/images/" class="img-fluid" alt="">
+    </div>
+
+  </section>
+
+
+
+  <!-- -----------------------------Testimonials Page Section starts here--------------------------------------- -->
+
+  <section class="testimonial-section py-5 ">
+    <div class="container text-center">
+
+      <h2 class="syne-font mb-4 display-6">What Job Seekers Say</h2>
+
+      <div class="testimonial-container  row g-4">
+
+        <div class="col-1 d-flex align-items-center"><button class="t-nav prev"><i
+              class="bi bi-chevron-left"></i></button>
+        </div>
+        <div class="col-10 testimonial-track">
+
+          <div class="testimonial active">
+            <img src="./assets/images/testimonial1.jfif">
+            <p class="inter-font">Got hired within 10 days. Amazing platform!</p>
+            <h6 class="inter-font">Aryan Gupta</h6>
+            <span class="inter-font">Frontend Developer</span>
+          </div>
+
+          <div class="testimonial">
+            <img src="./assets/images/testimonial4.jfif">
+            <p class="inter-font">Clean UI and verified companies. Loved it.</p>
+            <h6 class="inter-font">Mohd Afjan</h6>
+            <span class="inter-font">Senior Business Development Manager</span>
+          </div>
+          <div class="testimonial">
+            <img src="./assets/images/testimonial5.jfif">
+            <p class="inter-font">Switching jobs was never this simple. Clean UI, relevant openings, and great filters
+            </p>
+            <h6 class="inter-font">Mohd Anas</h6>
+            <span class="inter-font">Senior Trainer</span>
+          </div>
+
+          <div class="testimonial">
+            <img src="./assets/images/testimonial3.jfif">
+            <p class="inter-font">Best portal for freshers. Highly recommended.</p>
+            <h6 class="inter-font">Arun Kumar</h6>
+            <span class="inter-font">Cloud DevOps Engineer</span>
+          </div>
+
+          <div class="testimonial">
+            <img src="./assets/images/testimonial2.jfif">
+            <p class="inter-font">Resume upload + quick apply saved so much time. One of the best portals I've used.</p>
+            <h6 class="inter-font">Mohd Altaf</h6>
+            <span class="inter-font">Java Developer</span>
+          </div>
+
+        </div>
+
+        <div class="col-1 d-flex align-items-center">
+
+          <button class="t-nav next"><i class="bi bi-chevron-right"></i></button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- -----------------------------Testimonials Page Section Ends here--------------------------------------- -->
+
+
+
+
+  <section class="">
+    <img src="./assets/images/pre-footer-2 (2).png" class="img-fluid pre-footer-img" alt="">
+  </section>
+
+
+
+
+  <!-- ---------Footer Page starts------------- -->
+  <div id="footer"></div>
+  <!-- ---------Footer Page ends------------- -->
+
+  <script src="config.js"></script>
+  <script>
+
+    let sliderPosition = 0;
+    const cardWidth = 190; // card width + gap
+
+    //  Load companies on page load
+    document.addEventListener("DOMContentLoaded", loadCompanies);
+
+    async function loadCompanies() {
+      try {
+        const response = await fetchWithRefresh(`${API_BASE_URL}/companies/public`, {
+
+        });
+
+        if (!response.ok) throw new Error("Failed to load companies");
+
+        const companies = await response.json();
+        renderSlider(companies);
+
+      } catch (err) {
+        console.error("Companies error:", err);
+        document.getElementById("companySlider").innerHTML = `
+          <p class="text-muted py-3">
+            Unable to load companies. Please try again later.
+          </p>`;
+      }
+    }
+
+    //  Render company cards
+    function renderSlider(companies) {
+      const slider = document.getElementById("companySlider");
+      slider.innerHTML = "";
+
+      if (!companies || companies.length === 0) {
+        slider.innerHTML = `
+          <p class="text-muted py-3">No companies available.</p>`;
+        return;
+      }
+
+      companies.forEach(company => {
+        //  Get initials for logo placeholder
+        const initials = company.companyName
+          .split(" ")
+          .map(w => w[0])
+          .join("")
+          .substring(0, 2)
+          .toUpperCase();
+
+        slider.innerHTML += `
+          <div class="company-card"
+               onclick="goToCompanyJobs(${company.id}, '${encodeURIComponent(company.companyName)}')">
+            <div class="company-logo text-cyan-color">
+              ${company.logoUrl
+            ? `<img src="${company.logoUrl}" alt="${company.companyName}">`
+            : initials
+          }
+            </div>
+            <div class="company-name">${company.companyName}</div>
+            <div class="company-city">
+              <i class="bi bi-geo-alt me-1"></i>${company.city || ""}
+            </div>
+          </div>`;
+      });
+    }
+
+    //  Redirect to company jobs page
+    function goToCompanyJobs(companyId, companyName) {
+      window.location.href =
+        `/companyJobs.html?id=${companyId}&name=${companyName}`;
+    }
+
+    //  Slider controls
+    function slideRight() {
+      const slider = document.getElementById("companySlider");
+      const maxScroll = slider.scrollWidth - slider.parentElement.offsetWidth;
+      sliderPosition = Math.min(sliderPosition + cardWidth * 3, maxScroll);
+      slider.style.transform = `translateX(-${sliderPosition}px)`;
+    }
+
+    function slideLeft() {
+      sliderPosition = Math.max(sliderPosition - cardWidth * 3, 0);
+      document.getElementById("companySlider").style.transform =
+        `translateX(-${sliderPosition}px)`;
+    }
+  </script>
+
+
+  <script>
+    function goToJobsPage() {
+      const title = document.getElementById("searchTitle").value.trim();
+      const location = document.getElementById("searchLocation").value.trim();
+      const category = document.getElementById("searchCategory").value.trim();
+
+      const params = new URLSearchParams();
+      if (title) params.append("title", title);
+      if (location) params.append("location", location);
+      if (category) params.append("category", category);
+
+      window.location.href = `/jobs.html?${params.toString()}`;
+    }
+
+    // Also trigger on Enter key
+    document.addEventListener("DOMContentLoaded", () => {
+      ["searchTitle", "searchLocation", "searchCategory"].forEach(id => {
+        document.getElementById(id)?.addEventListener("keydown", e => {
+          if (e.key === "Enter") goToJobsPage();
+        });
+      });
+    });
+  </script>
+
+
+  <script src="./assets/js/bootstrap.js"></script>
+  <script src="./assets/js/script.js"></script>
+</body>
+
+</html>

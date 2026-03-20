@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub Admins - Admin Panel</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: #0b2239;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 16.666667%;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar a,
+        .sidebar-link {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar-link:hover,
+        .sidebar a.active {
+            background: #343a40;
+            color: #fff;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                margin-left: 16.666667%;
+            }
+        }
+
+        .top-navbar {
+            background-color: #091d33;
+        }
+
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-overlay.show {
+            display: flex;
+        }
+
+        .admin-name-btn {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .admin-name-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="spinner-overlay" id="spinnerOverlay">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <!-- Mobile Navbar -->
+    <nav class="navbar navbar-dark top-navbar d-md-none" style="background-color:#091d33;">
+        <div class="container-fluid">
+            <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="navbar-brand mb-0 h5">Admin Panel</span>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Admin Panel</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <a href="dashboard.html" class="sidebar-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            <a href="manageEmployers.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Employers</a>
+            <a href="candidates.html" class="sidebar-link"><i class="bi bi-people me-2"></i> Candidates</a>
+            <a href="applications.html" class="sidebar-link"><i class="bi bi-file-earmark-text me-2"></i>
+                Applications</a>
+            <a href="subAdmins.html" class="sidebar-link active"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
+                <a href="companies.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Companies</a>
+                     <a href="jobCategories.html" class="active">
+                <i class="bi bi-tags me-2"></i> Job Categories
+            </a>
+                <a href="#" class="sidebar-link" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Desktop Sidebar -->
+            <nav class="col-md-2 d-none d-md-block sidebar p-0">
+                <div class="position-sticky">
+                    <h4 class="text-white text-center py-3">Admin Panel</h4>
+                    <a href="dashboard.html"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                    <a href="manageEmployers.html"><i class="bi bi-building me-2"></i> Employers</a>
+                    <a href="candidates.html"><i class="bi bi-people me-2"></i> Candidates</a>
+                    <a href="applications.html"><i class="bi bi-file-earmark-text me-2"></i> Applications</a>
+                    <a href="subAdmins.html" class="active"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
+                      <a href="companies.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Companies</a>
+                    <a href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-md-4 py-4 main-content">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="bi bi-shield-lock me-2"></i>Sub Admins</h2>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="admin-name-btn" onclick="openProfileModal()" id="adminName">Welcome, Admin</span>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card p-3 border-start border-4 border-success shadow-sm">
+                            <h6 class="text-muted">Total Sub Admins</h6>
+                            <h3 id="totalSubAdmins">--</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card p-3 border-start border-4 border-primary shadow-sm">
+                            <h6 class="text-muted">Active</h6>
+                            <h3 id="activeSubAdmins">--</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="card p-3 border-start border-4 border-secondary shadow-sm">
+                            <h6 class="text-muted">Inactive / Pending</h6>
+                            <h3 id="inactiveSubAdmins">--</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">All Sub Admins</h5>
+                        <button class="btn btn-success btn-sm" onclick="openCreateModal()">
+                            <i class="bi bi-plus-circle me-1"></i> Add Sub Admin
+                        </button>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Full Name</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subAdminTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                                        </div> Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== CREATE MODAL ===== -->
+    <div class="modal fade" id="createModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Create Sub Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- FIX: wrap in form so password field is contained -->
+                <form onsubmit="return false;">
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none" id="createError"></div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="c_fullname" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="c_username" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="c_email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="number" class="form-control" id="c_phone" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="c_password" />
+                                <button class="btn btn-outline-secondary" type="button"
+                                    onclick="togglePw('c_password',this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success" id="createBtn" type="button" onclick="createSubAdmin()">
+                            <span id="createBtnText">Create</span>
+                            <span id="createSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EDIT MODAL ===== -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Edit Sub Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" id="editError"></div>
+                    <input type="hidden" id="e_id" />
+                    <div class="mb-3"><label class="form-label fw-semibold">Full Name</label><input type="text"
+                            class="form-control" id="e_fullname" /></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Username</label><input type="text"
+                            class="form-control" id="e_username" /></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Email</label><input type="email"
+                            class="form-control" id="e_email" /></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Phone</label><input type="number"
+                            class="form-control" id="e_phone" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="editBtn" onclick="updateSubAdmin()">
+                        <span id="editBtnText">Save Changes</span>
+                        <span id="editSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PROFILE MODAL ===== -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>My Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Avatar + Info -->
+                    <div class="d-flex align-items-center gap-4 mb-4 p-3 bg-light rounded">
+                        <div>
+                            <h5 class="mb-1" id="profileDisplayName">--</h5>
+                            <p class="text-muted mb-1" id="profileDisplayEmail">--</p>
+                            <span class="badge bg-success" id="profileDisplayRole">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-3" id="profileTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="switchTab('editProfile', this)">
+                                <i class="bi bi-pencil me-1"></i> Edit Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="switchTab('changePassword', this)">
+                                <i class="bi bi-lock me-1"></i> Change Password
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab: Edit Profile -->
+                    <div id="tab_editProfile">
+                        <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated successfully!
+                        </div>
+                        <div class="alert alert-danger d-none" id="editProfileError"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Full Name</label>
+                                <input type="text" class="form-control" id="p_fullname" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Username</label>
+                                <input type="text" class="form-control" id="p_username" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="p_email" disabled />
+                                <small class="text-muted">Email cannot be changed</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone</label>
+                                <input type="number" class="form-control" id="p_phone" />
+                            </div>
+                        </div>
+                        <div class="mt-3 text-end">
+                            <button class="btn btn-success" id="saveProfileBtn" onclick="saveProfile()">
+                                <span id="saveProfileText">Save Changes</span>
+                                <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Change Password — FIX: wrapped in form -->
+                    <div id="tab_changePassword" style="display:none;">
+                        <div class="alert alert-success d-none" id="changePwSuccess">Password changed successfully!
+                        </div>
+                        <div class="alert alert-danger d-none" id="changePwError"></div>
+                        <form onsubmit="return false;">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Current Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="p_currentPw"
+                                        placeholder="Enter current password" />
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePw('p_currentPw', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="p_newPw"
+                                        placeholder="Enter new password" />
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePw('p_newPw', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Confirm New Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="p_confirmPw"
+                                        placeholder="Confirm new password" />
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        onclick="togglePw('p_confirmPw', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-warning" id="changePwBtn" type="button"
+                                    onclick="changePassword()">
+                                    <span id="changePwText">Change Password</span>
+                                    <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="../config.js"></script>
+    <script>
+        protectAdminPage();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        if (!isLoggedIn()) window.location.href = "login.html";
+        document.getElementById("adminName").innerText = "Welcome, " + getAdminName();
+
+        function showSpinner() { document.getElementById("spinnerOverlay").classList.add("show"); }
+        function hideSpinner() { document.getElementById("spinnerOverlay").classList.remove("show"); }
+
+        function showToast(message, type = "success") {
+            const wrapper = document.createElement("div");
+            wrapper.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:9999;min-width:280px;";
+            wrapper.innerHTML = `
+        <div class="toast show align-items-center text-white bg-${type} border-0 shadow">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        onclick="this.closest('div[style]').remove()"></button>
+            </div>
+        </div>`;
+            document.body.appendChild(wrapper);
+            setTimeout(() => wrapper.remove(), 3500);
+        }
+
+        function getUserStatusBadge(status) {
+            const map = {
+                "ACTIVE": "success",
+                "PENDING": "warning text-dark",
+                "INACTIVE": "secondary",
+                "SUSPENDED": "danger"
+            };
+            return `<span class="badge bg-${map[status] || "secondary"}">${status || "N/A"}</span>`;
+        }
+
+        function formatDate(d) {
+            return d ? new Date(d).toLocaleDateString("en-IN", {
+                day: "2-digit", month: "short", year: "numeric"
+            }) : "N/A";
+        }
+
+        // ── Load Sub Admins ──
+        async function loadSubAdmins() {
+            showSpinner();
+            const tbody = document.getElementById("subAdminTableBody");
+            try {
+                //  fetchWithRefresh + .json() — was using undefined apiFetch()
+                const res = await fetchWithRefresh(`${API_BASE_URL}/admin/sub-admins`);
+                if (!res.ok) throw new Error(`Server error: ${res.status}`);
+                const raw = await res.json();
+                const data = Array.isArray(raw) ? raw : (raw.content || []);
+
+                document.getElementById("totalSubAdmins").innerText = data.length;
+                document.getElementById("activeSubAdmins").innerText =
+                    data.filter(s => s.userStatus === "ACTIVE").length;
+                document.getElementById("inactiveSubAdmins").innerText =
+                    data.filter(s => s.userStatus !== "ACTIVE").length;
+
+                if (!data.length) {
+                    tbody.innerHTML = `<tr>
+                <td colspan="8" class="text-center text-muted py-4">No sub-admins found.</td>
+            </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map((sa, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${sa.fullName ?? "N/A"}</td>
+                <td>${sa.username ?? "N/A"}</td>
+                <td>${sa.email ?? "N/A"}</td>
+                <td>${sa.phone ?? "N/A"}</td>
+                <td>${getUserStatusBadge(sa.userStatus)}</td>
+                <td>${formatDate(sa.createdAt)}</td>
+                <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                        <button class="btn btn-sm btn-outline-success"
+                                onclick="activateSubAdmin(${sa.userId})"
+                                ${sa.userStatus === "ACTIVE" ? "disabled" : ""}>
+                            <i class="bi bi-check-circle"></i> Activate
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning"
+                                onclick="deactivateSubAdmin(${sa.userId})"
+                                ${sa.userStatus === "INACTIVE" ? "disabled" : ""}>
+                            <i class="bi bi-slash-circle"></i> Deactivate
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary"
+                                onclick="openEditModal(
+                                    ${sa.userId},
+                                    '${(sa.fullName || "").replace(/'/g, "\\'")}',
+                                    '${(sa.username || "").replace(/'/g, "\\'")}',
+                                    '${(sa.email || "").replace(/'/g, "\\'")}',
+                                    '${sa.phone || ""}')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join("");
+
+            } catch (err) {
+                console.error("Load sub-admins error:", err);
+                tbody.innerHTML = `<tr>
+            <td colspan="8" class="text-center text-danger py-4">
+                Failed to load sub-admins. Please refresh.
+            </td>
+        </tr>`;
+            } finally {
+                hideSpinner();
+            }
+        }
+
+        // ── Create Sub Admin ──
+        function openCreateModal() {
+            ["c_fullname", "c_username", "c_email", "c_phone", "c_password"]
+                .forEach(id => document.getElementById(id).value = "");
+            document.getElementById("createError").classList.add("d-none");
+            new bootstrap.Modal(document.getElementById("createModal")).show();
+        }
+
+        async function createSubAdmin() {
+            const fullname = document.getElementById("c_fullname").value.trim();
+            const username = document.getElementById("c_username").value.trim();
+            const email = document.getElementById("c_email").value.trim();
+            const phone = document.getElementById("c_phone").value.trim();
+            const password = document.getElementById("c_password").value;
+            const errorEl = document.getElementById("createError");
+
+            errorEl.classList.add("d-none");
+
+            if (!fullname || !username || !email || !password) {
+                errorEl.innerText = "Please fill all required fields.";
+                errorEl.classList.remove("d-none");
+                return;
+            }
+
+            const btn = document.getElementById("createBtn");
+            const btnText = document.getElementById("createBtnText");
+            const spinner = document.getElementById("createSpinner");
+            btn.disabled = true;
+            btnText.innerText = "Creating...";
+            spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/admin/sub-admins`, {
+                    method: "POST",
+                    body: JSON.stringify({  // JSON.stringify
+                        fullname, username, email, password,
+                        phone: phone ? Number(phone) : null
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "Failed to create sub-admin");
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById("createModal")).hide();
+                loadSubAdmins();
+                showToast("Sub-admin created successfully! ✓", "success");
+
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to create sub-admin.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Create";
+                spinner.classList.add("d-none");
+            }
+        }
+
+        // ── Edit Sub Admin ──
+        function openEditModal(id, fullname, username, email, phone) {
+            document.getElementById("e_id").value = id;
+            document.getElementById("e_fullname").value = fullname;
+            document.getElementById("e_username").value = username;
+            document.getElementById("e_email").value = email;
+            document.getElementById("e_phone").value = phone;
+            document.getElementById("editError").classList.add("d-none");
+            new bootstrap.Modal(document.getElementById("editModal")).show();
+        }
+
+        async function updateSubAdmin() {
+            const id = document.getElementById("e_id").value;
+            const fullname = document.getElementById("e_fullname").value.trim();
+            const username = document.getElementById("e_username").value.trim();
+            const email = document.getElementById("e_email").value.trim();
+            const phone = document.getElementById("e_phone").value.trim();
+            const errorEl = document.getElementById("editError");
+
+            errorEl.classList.add("d-none");
+
+            const btn = document.getElementById("editBtn");
+            const btnText = document.getElementById("editBtnText");
+            const spinner = document.getElementById("editSpinner");
+            btn.disabled = true;
+            btnText.innerText = "Saving...";
+            spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/admin/sub-admins/${id}`, {
+                    method: "PUT",
+                    body: JSON.stringify({  //  JSON.stringify
+                        fullname, username, email,
+                        phone: phone ? Number(phone) : null
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "Failed to update sub-admin");
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+                loadSubAdmins();
+                showToast("Sub-admin updated successfully! ✓", "success");
+
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to update sub-admin.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Save Changes";
+                spinner.classList.add("d-none");
+            }
+        }
+
+        // ── Activate / Deactivate ──
+        async function activateSubAdmin(id) {
+            if (!confirm("Activate this sub-admin?")) return;
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/sub-admins/${id}/activate`,
+                    { method: "PATCH", body: JSON.stringify({ status: "ACTIVE" }) } // 
+                );
+                if (!res.ok) throw new Error();
+                loadSubAdmins();
+                showToast("Sub-admin activated ✓", "success");
+            } catch {
+                showToast("Failed to activate sub-admin", "danger");
+            }
+        }
+
+        async function deactivateSubAdmin(id) {
+            if (!confirm("Deactivate this sub-admin?")) return;
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/sub-admins/${id}/deactivate`,
+                    { method: "PATCH", body: JSON.stringify({ status: "INACTIVE" }) } // 
+                );
+                if (!res.ok) throw new Error();
+                loadSubAdmins();
+                showToast("Sub-admin deactivated", "warning");
+            } catch {
+                showToast("Failed to deactivate sub-admin", "danger");
+            }
+        }
+
+        // ── Profile Modal ──
+        async function openProfileModal() {
+            switchTab("editProfile", document.querySelector("#profileTabs .nav-link"));
+            ["editProfileSuccess", "editProfileError", "changePwSuccess", "changePwError"]
+                .forEach(id => document.getElementById(id).classList.add("d-none"));
+            ["p_currentPw", "p_newPw", "p_confirmPw"]
+                .forEach(id => document.getElementById(id).value = "");
+
+            new bootstrap.Modal(document.getElementById("profileModal")).show();
+
+            try {
+                //  Must call .json() on the response
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/me`);
+                const data = await res.json();
+
+                const displayName = data.fullName || data.username || "Admin";
+                document.getElementById("profileDisplayName").innerText = displayName;
+                document.getElementById("profileDisplayEmail").innerText = data.username || "";
+                document.getElementById("profileDisplayRole").innerText = data.role || "ADMIN";
+                document.getElementById("p_fullname").value = data.fullName || "";
+                document.getElementById("p_username").value = data.username || "";
+                document.getElementById("p_email").value = data.username || "";
+                document.getElementById("p_phone").value = data.phone || "";
+                document.getElementById("adminName").innerText = "Welcome, " + displayName;
+                localStorage.setItem("fullName", displayName);
+
+            } catch (err) {
+                console.error("Failed to load profile:", err);
+            }
+        }
+
+        function switchTab(tabName, clickedLink) {
+            document.getElementById("tab_editProfile").style.display = "none";
+            document.getElementById("tab_changePassword").style.display = "none";
+            document.getElementById("tab_" + tabName).style.display = "block";
+            document.querySelectorAll("#profileTabs .nav-link")
+                .forEach(l => l.classList.remove("active"));
+            clickedLink.classList.add("active");
+        }
+
+        // ── Save Profile ──
+        async function saveProfile() {
+            const fullname = document.getElementById("p_fullname").value.trim();
+            const username = document.getElementById("p_username").value.trim();
+            const phone = document.getElementById("p_phone").value.trim();
+            const successEl = document.getElementById("editProfileSuccess");
+            const errorEl = document.getElementById("editProfileError");
+            successEl.classList.add("d-none");
+            errorEl.classList.add("d-none");
+
+            const btn = document.getElementById("saveProfileBtn");
+            const btnText = document.getElementById("saveProfileText");
+            const spinner = document.getElementById("saveProfileSpinner");
+            btn.disabled = true;
+            btnText.innerText = "Saving...";
+            spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/update-profile`, {
+                    method: "PUT",
+                    body: JSON.stringify({  // 
+                        fullname, username,
+                        phone: phone ? Number(phone) : null
+                    })
+                });
+                if (!res.ok) throw new Error("Failed to update profile");
+
+                successEl.classList.remove("d-none");
+                const displayName = fullname || username;
+                document.getElementById("profileDisplayName").innerText = displayName;
+                document.getElementById("adminName").innerText = "Welcome, " + displayName;
+                localStorage.setItem("fullName", displayName);
+
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to update profile.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Save Changes";
+                spinner.classList.add("d-none");
+            }
+        }
+
+        // ── Change Password ──
+        async function changePassword() {
+            const currentPw = document.getElementById("p_currentPw").value.trim();
+            const newPw = document.getElementById("p_newPw").value.trim();
+            const confirmPw = document.getElementById("p_confirmPw").value.trim();
+            const successEl = document.getElementById("changePwSuccess");
+            const errorEl = document.getElementById("changePwError");
+            successEl.classList.add("d-none");
+            errorEl.classList.add("d-none");
+
+            if (!currentPw || !newPw || !confirmPw) {
+                errorEl.innerText = "Please fill all password fields.";
+                errorEl.classList.remove("d-none"); return;
+            }
+            if (newPw !== confirmPw) {
+                errorEl.innerText = "New passwords do not match.";
+                errorEl.classList.remove("d-none"); return;
+            }
+            if (newPw.length < 6) {
+                errorEl.innerText = "Password must be at least 6 characters.";
+                errorEl.classList.remove("d-none"); return;
+            }
+
+            const btn = document.getElementById("changePwBtn");
+            const btnText = document.getElementById("changePwText");
+            const spinner = document.getElementById("changePwSpinner");
+            btn.disabled = true;
+            btnText.innerText = "Changing...";
+            spinner.classList.remove("d-none");
+
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/change-password`, {
+                    method: "POST",
+                    body: JSON.stringify({  // 
+                        currentPassword: currentPw,
+                        newPassword: newPw
+                    })
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.message || "Failed to change password");
+                }
+                successEl.classList.remove("d-none");
+                ["p_currentPw", "p_newPw", "p_confirmPw"]
+                    .forEach(id => document.getElementById(id).value = "");
+
+            } catch (err) {
+                errorEl.innerText = err.message || "Failed to change password.";
+                errorEl.classList.remove("d-none");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Change Password";
+                spinner.classList.add("d-none");
+            }
+        }
+
+        // ── Password Toggle ──
+        function togglePw(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            } else {
+                input.type = "password";
+                btn.innerHTML = '<i class="bi bi-eye"></i>';
+            }
+        }
+
+        // ── Logout ──
+        function logout() { adminLogout(); }
+
+        // ── Boot ──
+        loadSubAdmins();
+    </script>
+</body>
+
+</html>

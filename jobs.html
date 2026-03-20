@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs - JobsHunt</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        .job-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.10);
+            transform: translateY(-2px);
+        }
+
+        /* ── Pagination ── */
+        .jobs-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .jobs-pagination button {
+            min-width: 36px;
+            height: 36px;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .jobs-pagination button:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+        }
+
+        .jobs-pagination button.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+
+        .jobs-pagination button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+        
+        .apply-btn {
+            background: #1bb39a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-btn:hover {
+            background: #159a85;
+            color: white;
+        }
+
+        .apply-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ----------------------Header Starts----------------------------------- -->
+    <section class="position-sticky fixed-top  bg-grey-color shadow-sm rounded">
+        <div id="header"></div>
+    </section>
+    <!-- ----------------------Header Ends----------------------------------- -->
+
+    <!-- Search Section -->
+    <section class="container my-5">
+        <div class="p-4 search-section">
+
+            <h3 class="mb-4 text-center">Find Your Dream Job</h3>
+
+            <div class="row g-3">
+                <div class="hero-search-bar">
+                    <!-- Search & Filter Bar -->
+                    <div class="jobs-search-bar">
+                        <div class="search-field">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="searchTitle" placeholder="Job title, skills...">
+                        </div>
+                        <div class="search-field">
+                            <i class="bi bi-geo-alt search-icon"></i>
+                            <input type="text" id="searchLocation" placeholder="Location...">
+                        </div>
+                        <div class="search-field">
+                            <i class="bi bi-tag search-icon"></i>
+                            <input type="text" id="searchCategory" placeholder="Category...">
+                        </div>
+                        <button class="search-btn" onclick="goToJobsPage()">
+                            Search
+                        </button>
+                    </div>
+                </div>
+                <!-- Active filters chips -->
+                <div id="activeFilters" class="active-filters"></div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Job Listings -->
+    <!-- Job Listings -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold mb-0">Open Jobs <span class="text-muted fs-6">(<span id="jobCount">0</span>
+                    found)</span></h5>
+        </div>
+        <div id="activeFilters" class="active-filters mb-3"></div>
+
+        <!-- 3-column grid -->
+        <div id="recommendedJobsContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+
+        <!-- Pagination -->
+        <div id="jobPagination" class="jobs-pagination mt-4"></div>
+    </section>
+
+
+    <!-- ---------Footer Page starts------------- -->
+    <div id="footer"></div>
+    <!-- ---------Footer Page ends------------- -->
+
+    <!-- ── Apply Confirmation Modal ── -->
+<div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Confirm Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-send-check fs-1 text-primary d-block mb-3"></i>
+                <p class="mb-1">You are applying for:</p>
+                <h6 class="fw-bold" id="applyJobTitle"></h6>
+                <p class="text-muted small mt-2">Your profile and resume will be shared with the recruiter.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
+                <button class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary px-4" onclick="confirmApply()">
+                    <i class="bi bi-send me-1"></i> Confirm Apply
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Login Required Modal ── -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Login Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-lock fs-1 text-warning d-block mb-3"></i>
+                <h6 class="fw-bold mb-2">You need to login first</h6>
+                <p class="text-muted small">Please login as a Job Seeker to apply for jobs.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
+                <button class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary px-4" onclick="redirectToLogin()">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast Notification ── -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="appToast" class="toast align-items-center border-0" role="alert" aria-live="assertive">
+        <div class="d-flex">
+            <div class="toast-body fw-semibold" id="toastMessage"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+    <!-- Bootstrap JS -->
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+    <script src="config.js"></script>
+    <script src="assets/js/pages/jobs.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="icon" href="/assets/images/tab-logo1.png">
+</head>
+
+<body>
+
+
+
+    <!-- -------------Header Section Start------------------- -->
+    <section class="position-sticky  fixed-top  bg-grey-color shadow-sm rounded">
+        <div id="recruiter-header"></div>
+    </section>
+    <!-- -------------Header Section End------------------- -->
+
+
+
+
+    <section class="recruiter-section ">
+
+        <div class="d-flex align-items-center justify-content-center position-relative z-3 py-5">
+            <div class="container">
+                <div class="wrapper glass-card rounded-5">
+
+                    <form id="recruiterRegisterForm" class="d-flex flex-column gap-3">
+
+                        <div id="message"></div>
+                        <h1 class="text-center text-white mb-3">
+                            Recruiter Registration
+                        </h1>
+
+                        <div class="row g-4 mb-3">
+
+
+                            <div class="col-md-6 input-field">
+                                <input id="recruiterName" type="text" required>
+                                <label>Recruiter Full Name</label>
+                            </div>
+                            <div class="col-md-6 input-field">
+                                <input id="username" type="text" required>
+                                <label>Username</label>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row g-4 mb-3">
+
+                            <div class="col-md-6 input-field">
+                                <input id="companyName" type="text" required>
+                                <label>Company Name</label>
+                            </div>
+
+
+                            <div class="col-md-6 input-field">
+                                <input id="officialEmail" type="email" required>
+                                <label>Official Work Email</label>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row g-4 mb-3">
+
+                            <div class="col-md-6 input-field mb-3">
+                                <input id="phone" type="tel" required>
+                                <label>Phone Number</label>
+                            </div>
+
+                            <div class="col-md-6 input-field">
+                                <input id="companyCity" type="text" required>
+                                <label>Company City</label>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="row g-4 mb-3">
+
+
+                            <div class="col-md-12 input-field">
+
+                                <textarea id="companyDescription" required></textarea>
+                                <label>Company Description</label>
+
+
+                            </div>
+                        </div>
+
+                        
+                            <div class="row g-4  mb-3">
+                                <div class="col-md-6 input-field password-field">
+                                    <input id="password" type="password" required>
+                                    <label>Password</label>
+                                    <div class="glass-eye toggle-password" data-target="password">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-md-6 input-field password-field">
+                                    <input id="confirmPassword" type="password" required>
+                                    <label>Confirm Password</label>
+
+                                    <div class="glass-eye toggle-password" data-target="confirmPassword">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <small id="passwordError" class="text-danger col-md-6"></small>
+                                <small id="confirmError" class="text-danger col-md-6"></small>
+
+                            </div>
+                        <div class="glass-checkbox my-3">
+                            <input type="checkbox" required>
+                            <label>I agree to the Terms & Conditions</label>
+                        </div>
+
+                        <button type="submit" id="registerBtn" class="btn btn-teal rounded-3">
+                            Register as Recruiter
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ---------Footer Page starts------------- -->
+    <div id="footer"></div>
+    <!-- ---------Footer Page ends------------- -->
+
+
+
+
+    <script src="../config.js"></script>
+<script src="/assets/js/pages/recruiterRegisterPage.js"></script>
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+</body>
+
+</html>

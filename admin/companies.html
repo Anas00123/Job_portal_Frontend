@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
+    <style>
+        body {
+            margin: 0;
+            background-color: #f4f6f9;
+            overflow-x: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: #0b2239;
+            color: #fff;
+            padding-top: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: #cfd8dc;
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #133b5c;
+            color: #fff;
+        }
+
+        .overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            top: 0;
+            left: 0;
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @media(min-width: 992px) {
+            .sidebar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+            border: none;
+        }
+
+        /* ── Stat cards ── */
+        .stat-card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        /* ── Search bar ── */
+        .search-bar {
+            background: #fff;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 320px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        /* ── Status filter tabs ── */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            border-color: #0b2239;
+        }
+
+        .filter-tab.active {
+            background: #0b2239;
+            color: #fff;
+            border-color: #0b2239;
+        }
+
+        /* ── Toast ── */
+        #toastContainer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-msg {
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            animation: fadeInUp 0.3s ease;
+            min-width: 240px;
+        }
+
+        .toast-msg.success {
+            background: #198754;
+        }
+
+        .toast-msg.danger {
+            background: #dc3545;
+        }
+
+        .toast-msg.warning {
+            background: #d97706;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-name-btn {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .admin-name-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── Sidebar ── -->
+    <div class="sidebar" id="sidebar">
+        <h4>Admin Panel</h4>
+        <a href="dashboard.html"><i class="fa fa-chart-line me-2"></i> Dashboard</a>
+        <a href="manageEmployers.html"><i class="fa fa-building me-2"></i> Employers</a>
+        <a href="candidates.html"><i class="fa fa-users me-2"></i> Candidates</a>
+        <a href="applications.html"><i class="fa fa-file-alt me-2"></i> Applications</a>
+        <a href="subAdmins.html"><i class="fa fa-shield me-2"></i> Sub Admins</a>
+        <a href="companies.html"><i class="fa fa-city me-2"></i> Companies</a>
+                  <a href="jobCategories.html" class="active">
+                <i class="bi bi-tags me-2"></i> Job Categories
+            </a>
+        <a href="#" onclick="logout()"><i class="fa fa-sign-out-alt me-2"></i> Logout</a>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ── Toast Container ── -->
+    <div id="toastContainer"></div>
+
+    <!-- ── Main Content ── -->
+    <div class="main-content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-light bg-white shadow-sm mb-4 rounded">
+            <div class="container-fluid">
+                <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <span class="navbar-brand mb-0 h4">
+                    <i class="fa fa-city me-2"></i>Companies
+                </span>
+                <span class="admin-name-btn" id="adminName">Welcome, Admin</span>
+            </div>
+        </nav>
+
+        <!-- ── Stat Cards ── -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stat-label">Total Companies</div>
+                            <div class="stat-value" id="totalCompanies">--</div>
+                        </div>
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stat-label">Verified</div>
+                            <div class="stat-value text-success" id="verifiedCompanies">--</div>
+                        </div>
+                        <div class="icon-box bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-building-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value text-warning" id="pendingCompanies">--</div>
+                        </div>
+                        <div class="icon-box bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card stat-card p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stat-label">Suspended</div>
+                            <div class="stat-value text-danger" id="suspendedCompanies">--</div>
+                        </div>
+                        <div class="icon-box bg-danger bg-opacity-10 text-danger">
+                            <i class="bi bi-building-x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Table Card ── -->
+        <div class="card p-4">
+            <!-- Header: search + filter -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                <h5 class="mb-0 fw-semibold">All Companies</h5>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <!-- Search -->
+                    <div class="search-bar">
+                        <i class="bi bi-search text-muted"></i>
+                        <input type="text" id="searchInput" placeholder="Search company..." oninput="filterTable()">
+                    </div>
+                    <!-- Status filter tabs -->
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="setFilter('ALL', this)">All</button>
+                        <button class="filter-tab" onclick="setFilter('VERIFIED', this)">Verified</button>
+                        <button class="filter-tab" onclick="setFilter('PENDING', this)">Pending</button>
+                        <button class="filter-tab" onclick="setFilter('SUSPENDED', this)">Suspended</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table align-middle table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Company Name</th>
+                            <th>City</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companyTableBody">
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty state (hidden by default) -->
+            <div id="emptyState" class="text-center py-5 d-none">
+                <i class="bi bi-building fs-1 text-muted d-block mb-3"></i>
+                <h6 class="text-muted">No companies found</h6>
+            </div>
+        </div>
+
+    </div><!-- /.main-content -->
+
+    <script src="../config.js"></script>
+    <script> protectAdminPage(); </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        // ── Init ──
+        document.getElementById("adminName").innerText = "Welcome, " + getAdminName();
+
+        let allCompanies = [];   // full dataset for client-side filter
+        let activeFilter = "ALL";
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        // ── Toast ──
+        function showToast(message, type = "success") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast-msg ${type}`;
+            toast.innerHTML = `
+            <i class="bi bi-${type === "success" ? "check-circle" : type === "warning" ? "exclamation-circle" : "x-circle"} me-2"></i>
+            ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        // ── Status badge helper — maps VerificationStatus enum ──
+        const statusMap = {
+            "VERIFIED": { cls: "bg-success", label: "Verified" },
+            "PENDING": { cls: "bg-warning text-dark", label: "Pending" },
+            "SUSPENDED": { cls: "bg-danger", label: "Suspended" },
+        };
+
+        function getStatusBadge(status) {
+            const s = statusMap[status] || { cls: "bg-secondary", label: status || "N/A" };
+            return `<span class="badge ${s.cls}">${s.label}</span>`;
+        }
+
+        function formatDate(d) {
+            return d ? new Date(d).toLocaleDateString("en-IN", {
+                day: "2-digit", month: "short", year: "numeric"
+            }) : "N/A";
+        }
+
+        // ── Load Companies ──
+        document.addEventListener("DOMContentLoaded", loadCompanies);
+
+        async function loadCompanies() {
+            const tbody = document.getElementById("companyTableBody");
+            try {
+                const res = await fetchWithRefresh(`${API_BASE_URL}/companies`);
+                if (!res.ok) throw new Error(`Server error: ${res.status}`);
+                const raw = await res.json();
+                allCompanies = Array.isArray(raw) ? raw : (raw.content || []);
+
+                updateStats(allCompanies);
+                renderTable(allCompanies);
+
+            } catch (err) {
+                console.error("Load companies error:", err);
+                tbody.innerHTML = `<tr>
+                <td colspan="7" class="text-center text-danger py-4">
+                    Failed to load companies. Please refresh.
+                </td>
+            </tr>`;
+            }
+        }
+
+        // ── Update stat cards ──
+        function updateStats(data) {
+           
+            document.getElementById("totalCompanies").innerText = data.length;
+            document.getElementById("verifiedCompanies").innerText =
+                data.filter(c => c.verificationStatus === "VERIFIED").length;
+            document.getElementById("pendingCompanies").innerText =
+                data.filter(c => c.verificationStatus === "PENDING").length;
+            document.getElementById("suspendedCompanies").innerText =
+                data.filter(c => c.verificationStatus === "SUSPENDED").length;
+        }
+
+        // ── Render table ──
+        function renderTable(data) {
+            const tbody = document.getElementById("companyTableBody");
+            const emptyState = document.getElementById("emptyState");
+
+            if (!data.length) {
+                tbody.innerHTML = "";
+                emptyState.classList.remove("d-none");
+                return;
+            }
+
+            emptyState.classList.add("d-none");
+            tbody.innerHTML = data.map((c, i) => `
+            <tr id="row-${c.id}">
+                <td>${i + 1}</td>
+                <td><strong>${c.companyName ?? "N/A"}</strong></td>
+                <td>${c.city ?? "N/A"}</td>
+                <td class="text-muted small" style="max-width:220px;">
+                    ${c.description
+                    ? c.description.substring(0, 60) + (c.description.length > 60 ? "..." : "")
+                    : "—"}
+                </td>
+                <td id="badge-${c.id}">${getStatusBadge(c.verificationStatus)}</td>
+                <td>${formatDate(c.createdAt)}</td>
+                <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                        <button class="btn btn-sm btn-outline-success"
+                                onclick="activateCompany(${c.id})"
+                                ${c.verificationStatus === "VERIFIED" ? "disabled" : ""}>
+                            <i class="bi bi-check-circle me-1"></i>Verify
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                onclick="suspendCompany(${c.id})"
+                                ${c.verificationStatus === "SUSPENDED" ? "disabled" : ""}>
+                            <i class="bi bi-slash-circle me-1"></i>Suspend
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join("");
+        }
+
+        // ── Filter by status tab ──
+        function setFilter(status, btn) {
+            activeFilter = status;
+            document.querySelectorAll(".filter-tab")
+                .forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            filterTable();
+        }
+
+        // ── Search + status filter combined ──
+        function filterTable() {
+            const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+            const filtered = allCompanies.filter(c => {
+                const matchStatus = activeFilter === "ALL" ||
+                    c.verificationStatus === activeFilter;
+                const matchSearch = !keyword ||
+                    (c.companyName ?? "").toLowerCase().includes(keyword) ||
+                    (c.city ?? "").toLowerCase().includes(keyword);
+                return matchStatus && matchSearch;
+            });
+            renderTable(filtered);
+        }
+
+        // ── Activate (Verify) Company ──
+        async function activateCompany(id) {
+            if (!confirm("Verify this company?")) return;
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/companies/${id}/activate`,
+                    { method: "PATCH", body: JSON.stringify({ status: "VERIFIED" }) }
+                );
+                if (!res.ok) throw new Error();
+
+                //  Update badge inline — no full reload needed
+                const company = allCompanies.find(c => c.id === id);
+                if (company) company.verificationStatus = "VERIFIED";
+                document.getElementById(`badge-${id}`).innerHTML =
+                    getStatusBadge("VERIFIED");
+
+                //  Disable verify button, enable suspend button
+                const row = document.getElementById(`row-${id}`);
+                row.querySelectorAll("button")[0].disabled = true;
+                row.querySelectorAll("button")[1].disabled = false;
+
+                updateStats(allCompanies);
+                showToast("Company verified successfully ✓", "success");
+
+            } catch {
+                showToast("Failed to verify company.", "danger");
+            }
+        }
+
+        // ── Suspend (Reject) Company ──
+        async function suspendCompany(id) {
+            if (!confirm("Suspend this company?")) return;
+            try {
+                const res = await fetchWithRefresh(
+                    `${API_BASE_URL}/admin/companies/${id}/suspend`,
+                    { method: "PATCH", body: JSON.stringify({ status: "SUSPENDED" }) }
+                );
+                if (!res.ok) throw new Error();
+
+                //  Update badge inline
+                const company = allCompanies.find(c => c.id === id);
+                if (company) company.verificationStatus = "SUSPENDED";
+                document.getElementById(`badge-${id}`).innerHTML =
+                    getStatusBadge("SUSPENDED");
+
+                //  Enable verify button, disable reject button
+                const row = document.getElementById(`row-${id}`);
+                row.querySelectorAll("button")[0].disabled = false;
+                row.querySelectorAll("button")[1].disabled = true;
+
+                updateStats(allCompanies);
+                showToast("Company suspended.", "warning");
+
+            } catch {
+                showToast("Failed to suspend company.", "danger");
+            }
+        }
+
+        function logout() { adminLogout(); }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Company Jobs</title>
+    <link href="/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            background: #f4f7fb;
+        }
+
+        .job-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+            border: 1px solid #e9ecef;
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-header {
+            background:  #091d33;
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5">
+
+        <!-- Company Header -->
+        <div class="company-header text-center mb-4">
+            <h2 id="companyTitle">Loading...</h2>
+            <p class="mb-0 opacity-75" id="jobCount">Fetching jobs...</p>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div class="row" id="jobsContainer">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary"></div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="paginationContainer" class="mt-4"></div>
+
+    </div>
+
+    <!-- Apply Confirm Modal -->
+    <div class="modal fade" id="applyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Apply for Job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You are applying for <strong id="applyJobTitle"></strong></p>
+                    <p class="text-muted">
+                        Your saved resume will be submitted automatically.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" onclick="confirmApply()">
+                        <i class="bi bi-send me-1"></i> Confirm Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Required Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Login Required</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-lock-fill fs-1 text-warning mb-3 d-block"></i>
+                    <h5>Please login to apply</h5>
+                    <p class="text-muted">
+                        You need to be logged in as a Job Seeker to apply for jobs.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" onclick="redirectToLogin()">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/bootstrap.bundle.js"></script>
+
+
+    <script src="config.js"></script>
+    <script>
+
+        const params = new URLSearchParams(window.location.search);
+        const companyId = params.get("id");
+        const companyName = params.get("name");
+
+        let currentPage = 0;
+        const pageSize = 9;
+        let totalPages = 0;
+        let selectedJobId = null;
+        let selectedJobTitle = null;
+        // let isLoggedIn = false;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            document.getElementById("companyTitle").innerText =
+                decodeURIComponent(companyName || "Company");
+
+            await checkAuth();  //  Check login status first
+            loadJobs(0);        //  Then load jobs
+        });
+
+        //  Check if user is logged in (don't redirect — just set flag)
+        async function checkAuth() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/me`, {
+                    credentials: "include"
+                });
+
+                if (res.ok) {
+                    const user = await res.json();
+                    //  Only job seekers can apply
+                    isLoggedIn = user.role === "JOB_SEEKER";
+                }
+            } catch {
+                isLoggedIn = false;
+            }
+        }
+
+        //  Load jobs by company name
+        async function loadJobs(page = 0) {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/jobs/company/${encodeURIComponent(companyName)}?page=${page}&size=${pageSize}`,
+
+                );
+
+                if (!response.ok) throw new Error("Failed to load jobs");
+
+                const data = await response.json();
+
+                currentPage = data.number;
+                totalPages = data.totalPages;
+
+                document.getElementById("jobCount").innerText =
+                    `${data.totalElements} open position(s)`;
+
+                renderJobs(data.content);
+                renderPagination();
+
+            } catch (err) {
+                console.error("Jobs error:", err);
+                document.getElementById("jobsContainer").innerHTML = `
+                <div class="col-12 text-center text-muted py-5">
+                    <i class="bi bi-exclamation-circle fs-1 d-block mb-3"></i>
+                    <h5>Failed to load jobs</h5>
+                </div>`;
+            }
+        }
+
+        //  Render job cards
+        function renderJobs(jobs) {
+            const container = document.getElementById("jobsContainer");
+            container.innerHTML = "";
+
+            if (!jobs || jobs.length === 0) {
+                container.innerHTML = `
+                <div class="col-12 text-center text-muted py-5">
+                    <i class="bi bi-briefcase fs-1 d-block mb-3"></i>
+                    <h5>No open positions at ${decodeURIComponent(companyName)}</h5>
+                </div>`;
+                return;
+            }
+
+            console.log("Jobs loaded:", jobs);
+            jobs.forEach(job => {
+                container.innerHTML += `
+                <div class="col-md-4 mb-4">
+                    <div class="job-card h-100 d-flex flex-column">
+                        <div class="flex-grow-1">
+                            <h5 class="fw-bold mb-1">${job.title}</h5>
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-geo-alt me-1"></i>${job.location || "Remote"}
+                            </p>
+                            <p class="text-muted mb-1">
+                                <i class="bi bi-cash me-1"></i>
+                                ${job.salary
+                        ? '₹' + job.salary.toLocaleString()
+                        : 'Not disclosed'}
+                            </p>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-tag me-1"></i>
+                                ${job.categoryName || ""}
+                            </p>
+                            <p class="text-muted small">
+                                 ${job.description ? stripHtml(job.description).substring(0, 100)
+                        + "..." : "No description available"}
+                             </p>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button class="my-btn"
+                                    onclick="viewJobDetail(${job.jobId})">
+                                <i class="bi bi-eye me-1"></i> View
+                            </button>
+                            <button class="apply-btn  h-100"
+                                    onclick="applyJob(${job.jobId},'${job.title}')">
+                                <i class="bi bi-send me-1"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+   
+        function stripHtml(html) {
+            const temp = document.createElement("div");
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || "";
+        }
+
+        //  Apply button clicked — check login first
+        function applyJob(jobId, jobTitle) {
+            if (!isLoggedIn) {
+                //  Show login modal instead of redirecting
+                new bootstrap.Modal(
+                    document.getElementById("loginModal")
+                ).show();
+                return;
+            }
+
+            //  User is logged in — show apply confirmation
+            selectedJobId = jobId;
+            selectedJobTitle = jobTitle;
+
+            document.getElementById("applyJobTitle").innerText = jobTitle;
+
+            new bootstrap.Modal(
+                document.getElementById("applyModal")
+            ).show();
+        }
+
+        //  Confirm apply
+        async function confirmApply() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/applications/apply/${selectedJobId}`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                bootstrap.Modal
+                    .getInstance(document.getElementById("applyModal"))
+                    .hide();
+
+                if (response.ok) {
+                    showToast("Applied successfully! 🎉", "success");
+                } else if (response.status === 409) {
+                    showToast("You have already applied for this job", "warning");
+                } else {
+                    showToast("Failed to apply. Please try again.", "danger");
+                }
+
+            } catch (err) {
+                console.error("Apply error:", err);
+                showToast("Something went wrong", "danger");
+            }
+        }
+
+        //  Redirect to login — save current page to return after login
+        function redirectToLogin() {
+            sessionStorage.setItem("redirectAfterLogin",
+                window.location.href);
+            window.location.href = "../user/loginForm.html";
+        }
+
+        //  View job detail
+        function viewJobDetail(jobId) {
+            window.location.href = `/job/jobDetails.html?id=${jobId}`;
+        }
+
+        //  Pagination
+        function renderPagination() {
+            const container = document.getElementById("paginationContainer");
+            container.innerHTML = "";
+
+            if (totalPages <= 1) return;
+
+            let html = `<nav><ul class="pagination justify-content-center flex-wrap">`;
+
+            html += `
+            <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+                <button class="page-link" onclick="loadJobs(${currentPage - 1})">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </li>`;
+
+            for (let i = 0; i < totalPages; i++) {
+                html += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <button class="page-link" onclick="loadJobs(${i})">${i + 1}</button>
+                </li>`;
+            }
+
+            html += `
+            <li class="page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}">
+                <button class="page-link" onclick="loadJobs(${currentPage + 1})">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </li>`;
+
+            html += `</ul></nav>`;
+            container.innerHTML = html;
+        }
+
+        //  Toast notification
+        function showToast(message, type = "success") {
+            const toastHtml = `
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+                <div class="toast show align-items-center text-white bg-${type} border-0">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button"
+                                class="btn-close btn-close-white me-2 m-auto"
+                                data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>`;
+
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = toastHtml;
+            document.body.appendChild(wrapper);
+
+            setTimeout(() => wrapper.remove(), 3500);
+        }
+    </script>
+</body>
+
+</html>

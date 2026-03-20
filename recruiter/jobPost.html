@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/png" href="./assets/images/icons_LOGO.png">
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+
+    
+</head>
+
+<body>
+    <!-- ----------------------Header Starts----------------------------------- -->
+    <section class="position-sticky fixed-top  bg-grey-color shadow-sm rounded">
+  <div id="recruiter-header"></div>
+    </section>
+    <!-- ----------------------Header Ends----------------------------------- -->
+
+    <!-- Post a Job Section Starts -->
+<section class="job-section">
+
+    <div class="d-flex align-items-center justify-content-center position-relative z-3 py-5">
+
+        <div class="container w-100">
+
+            <div class="wrapper glass-card rounded-5">
+
+                <form id="postJobForm" class="d-flex flex-column gap-3">
+
+                    <h1 class="text-center text-white mb-3">Post a Job</h1>
+
+                    <div class="d-flex flex-column">
+
+                        <!-- Job Title -->
+                        <div class="input-field">
+                            <input id="jobTitle" type="text" required>
+                            <label>Job Title</label>
+                        </div>
+
+                        <!-- Job Description -->
+                        <div class="input-field">
+                            <textarea id="jobDescription" required></textarea>
+                            <label>Job Description</label>
+                        </div>
+
+                        <!-- Salary -->
+                        <div class="input-field">
+                            <input id="salary" type="text" required>
+                            <label>Salary Range</label>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="input-field">
+                            <input id="location" type="text" required>
+                            <label>Location</label>
+                        </div>
+
+                        <!-- Job Type -->
+                        <div class="input-field">
+                            <select id="jobType" required>
+                                <option value="" disabled selected hidden></option>
+                                <option class="text-dark">Full Time</option>
+                                <option class="text-dark">Part Time</option>
+                                <option class="text-dark">Internship</option>
+                                <option class="text-dark">Remote</option>
+                            </select>
+                            <label>Job Type</label>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="input-field">
+                            <input id="experience" type="text" required>
+                            <label>Experience Required</label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="submit" class="btn btn-teal px-4 rounded-3">
+                                Post Job
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div id="message"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- Post a Job Section Ends -->
+
+
+    <!-- ---------Footer Page starts------------- -->
+    <div id="footer"></div>
+    <!-- ---------Footer Page ends------------- -->
+
+    <script src="../config.js"></script>
+    <script src="/assets/js/bootstrap.js"></script>
+    <script src="/assets/js/script.js"></script>
+</body>
+
+</html>
