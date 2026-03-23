@@ -972,10 +972,16 @@ console.log("loggedIn:", localStorage.getItem("loggedIn"));
             document.getElementById("pendingBar").style.width = pctStr(applied + shortlisted, total);
 
             // Admin only — Sub Admin count
-            if (!IS_SUB_ADMIN) {
-                document.getElementById("totalSubAdmins").innerText = "--";
-            }
-
+           if (!IS_SUB_ADMIN) {
+    try {
+        const subAdminRes = await fetchWithRefresh(`${API_BASE_URL}/admin/sub-admins`);
+        const subAdmins = await subAdminRes.json();
+        const data = Array.isArray(subAdmins) ? subAdmins : (subAdmins.content || []);
+        document.getElementById("totalSubAdmins").innerText = data.length;
+    } catch(e) {
+        document.getElementById("totalSubAdmins").innerText = "0";
+    }
+}
             // Charts
             buildChart("appStatusChart", "doughnut",
                 ["Applied", "Shortlisted", "Hired", "Rejected"],
