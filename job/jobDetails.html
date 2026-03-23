@@ -295,7 +295,7 @@
     </div>
 
     <!--  Login Required Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1">
+    <!-- <div class="modal fade" id="loginModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -317,8 +317,42 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
+    <!--  Login Required Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-sm rounded-3">
+
+            <div class="modal-header border-bottom py-3 px-4">
+                <h6 class="modal-title fw-bold mb-0" id="loginModalLabel">Login required</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center py-4 px-4">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle"
+                     style="width:64px; height:64px; background:#fff3cd;">
+                    <i class="bi bi-lock-fill fs-3" style="color:#BA7517;"></i>
+                </div>
+                <p class="fw-bold mb-2 fs-6">Please login to apply</p>
+                <p class="text-muted small mb-0">
+                    You need to be logged in as a Job Seeker to apply for jobs.
+                </p>
+            </div>
+
+            <div class="modal-footer border-top justify-content-center gap-2 py-3 px-4 flex-wrap">
+                <button class="btn btn-outline-secondary px-4"
+                        data-bs-dismiss="modal">Cancel</button>
+                <button class="btn text-white px-4 fw-500"
+                        style="background:#091d33;"
+                        onclick="redirectToLogin()">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login now
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
     <!--  Already Applied Modal -->
     <div class="modal fade" id="alreadyAppliedModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">

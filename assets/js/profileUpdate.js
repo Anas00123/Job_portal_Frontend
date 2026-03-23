@@ -121,6 +121,7 @@ function renderAvatar(profile) {
 // PROFILE IMAGE UPLOAD
 // =======================================
 
+// ✅ Fix profile image upload
 document.getElementById("profileImageInput")
     ?.addEventListener("change", async function () {
         const file = this.files[0];
@@ -130,20 +131,29 @@ document.getElementById("profileImageInput")
         fd.append("file", file);
 
         try {
+            // ✅ Use fetchWithRefresh but override headers to remove Content-Type
             const res = await fetch(
                 `${API_BASE_URL}/profile/upload/profileimg`,
                 {
                     method: "POST",
                     credentials: "include",
                     body: fd
+                    // ✅ NO Content-Type - browser sets multipart automatically
                 }
             );
+
+            if (res.status === 401) {
+                // ✅ Token expired - redirect to login
+                window.location.href = "/user/loginForm.html";
+                return;
+            }
 
             if (res.ok) {
                 loadProfile();
                 alert("Profile photo updated");
             } else {
-                alert("Upload failed");
+                const data = await res.json();
+                alert(data.message || "Upload failed");
             }
         } catch (err) {
             console.error("Image upload error:", err);

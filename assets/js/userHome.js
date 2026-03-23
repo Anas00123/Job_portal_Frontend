@@ -234,8 +234,9 @@ document.getElementById("resumeInput")
         formData.append("file", file);
 
         try {
-            const response = await fetchWithRefresh(`${API_BASE_URL}/profile/upload/resume`, {
+            const response = await fetch(`${API_BASE_URL}/profile/upload/resume`, {
                 method: "POST",
+                credentials: "include",
                 body: formData
             });
 
