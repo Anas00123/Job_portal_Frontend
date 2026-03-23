@@ -138,6 +138,7 @@ document.getElementById("profileImageInput")
                     method: "POST",
                     credentials: "include",
                     body: fd
+                    
                     // ✅ NO Content-Type - browser sets multipart automatically
                 }
             );

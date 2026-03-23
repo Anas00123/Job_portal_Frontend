@@ -1,1035 +1,1148 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        /* ── Base ── */
-        body {
-            background-color: #f8f9fa;
+        :root {
+            --navy: #0b2239;
+            --teal: #0d9488;
+            --sidebar-w: 240px;
         }
 
-        /* ── Sidebar ── */
+        * { box-sizing: border-box; }
+        body { background: #f4f6fb; font-family: 'Segoe UI', sans-serif; margin: 0; }
+
+        /* ── SIDEBAR ── */
         .sidebar {
+            width: var(--sidebar-w);
+            background: var(--navy);
+            position: fixed;
+            top: 0; left: 0;
             height: 100vh;
-            background: #0b2239;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 16.666667%;
-            z-index: 100;
+            z-index: 200;
             overflow-y: auto;
-        }
-
-        .sidebar a,
-        .sidebar-link {
-            color: #adb5bd;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            transition: background 0.2s;
-        }
-
-        .sidebar a:hover,
-        .sidebar-link:hover,
-        .sidebar a.active {
-            background: #343a40;
-            color: #fff;
-        }
-
-        /* ── Layout ── */
-        @media (min-width: 768px) {
-            .main-content {
-                margin-left: 16.666667%;
-            }
-        }
-
-        /* ── Topbar ── */
-        .top-navbar {
-            background-color: #091d33;
-        }
-
-        /* ── Spinner overlay ── */
-        .spinner-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.6);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .spinner-overlay.show {
             display: flex;
+            flex-direction: column;
+            transition: left .3s;
         }
 
-        /* ── Error alert ── */
-        #errorAlert {
-            display: none;
+        .sidebar-brand {
+            padding: 20px 20px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* ── Admin name button ── */
-        .admin-name-btn {
-            cursor: pointer;
-            color: inherit;
+        .sidebar-brand h5 {
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .sidebar-brand h5 span { color: #14b8a6; }
+
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .role-badge.admin { background: #1d4ed8; color: white; }
+        .role-badge.subadmin { background: #d97706; color: white; }
+
+        .sidebar-nav { padding: 12px 0; flex: 1; }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 20px;
+            color: rgba(255,255,255,0.6);
             text-decoration: none;
-            font-weight: 600;
-        }
-
-        .admin-name-btn:hover {
-            text-decoration: underline;
-        }
-
-        /* ── Profile tabs ── */
-        .nav-tabs .nav-link {
-            color: #495057;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: #0b2239;
-            font-weight: 600;
-        }
-
-        /* ── Stat cards ── */
-        .stat-card {
-            border-radius: 12px;
+            font-size: 13.5px;
+            transition: all .2s;
+            cursor: pointer;
             border: none;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-            transition: transform 0.2s;
+            background: none;
+            width: 100%;
+            text-align: left;
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
+        .sidebar-item:hover { background: rgba(255,255,255,0.07); color: white; }
+        .sidebar-item.active { background: rgba(13,148,136,0.2); color: #14b8a6; border-left: 3px solid #14b8a6; }
+        .sidebar-item i { font-size: 16px; width: 18px; }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 8px 0;
         }
 
-        .stat-card .icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
+        .sidebar-section-label {
+            padding: 8px 20px 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .admin-info-text { flex: 1; min-width: 0; }
+        .admin-info-name { color: white; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-info-role { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+        /* ── MAIN ── */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left h4 { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; }
+        .topbar-left small { color: #64748b; font-size: 12px; }
+
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .topbar-btn {
+            background: none;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all .2s;
+        }
+
+        .topbar-btn:hover { background: #f8fafc; border-color: var(--navy); }
+
+        /* ── CONTENT ── */
+        .content { padding: 24px 28px; }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            transition: all .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+        .stat-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
         }
 
-        .stat-card .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            line-height: 1.1;
-        }
+        .stat-value { font-size: 30px; font-weight: 700; color: #0f172a; line-height: 1; }
+        .stat-label { font-size: 12.5px; color: #64748b; margin-bottom: 4px; }
+        .stat-sub { font-size: 12px; margin-top: 6px; }
 
-        .stat-card .stat-label {
-            font-size: 13px;
-            color: #6c757d;
-        }
+        /* ── PROGRESS ── */
+        .prog-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .prog-label { font-size: 12.5px; color: #64748b; }
+        .prog-val { font-size: 12.5px; font-weight: 600; }
+        .progress { height: 7px; border-radius: 4px; margin-bottom: 14px; }
 
-        .stat-card .stat-sub {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        /* ── Section titles ── */
-        .section-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0b2239;
-            margin-bottom: 0;
-        }
-
-        /* ── Progress bars ── */
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-        }
-
-        /* ── Chart cards ── */
+        /* ── CHART CARDS ── */
         .chart-card {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+        }
+
+        .chart-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-card-title i { color: var(--teal); }
+
+        /* ── TABLE ── */
+        .table-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-card-title { font-size: 14px; font-weight: 600; color: #0f172a; }
+
+        /* ── RESTRICTED OVERLAY ── */
+        .restricted-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .restricted-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(248,250,252,0.92);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .restricted-overlay.show { display: flex; }
+        .restricted-overlay i { font-size: 32px; color: #94a3b8; margin-bottom: 8px; }
+        .restricted-overlay p { font-size: 13px; color: #64748b; margin: 0; }
+
+        /* ── SPINNER ── */
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-overlay.show { display: flex; }
+
+        /* ── MOBILE ── */
+        .mobile-topbar {
+            display: none;
+            background: var(--navy);
+            padding: 12px 16px;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .mobile-menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .mobile-brand { color: white; font-weight: 700; font-size: 16px; }
+        .mobile-brand span { color: #14b8a6; }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+        }
+
+        .mobile-overlay.show { display: block; }
+
+        @media(max-width: 768px) {
+            .sidebar { left: -260px; }
+            .sidebar.open { left: 0; }
+            .main-content { margin-left: 0; }
+            .mobile-topbar { display: flex; }
+            .topbar { display: none; }
+            .content { padding: 16px; }
+        }
+
+        /* Status badges */
+        .badge-applied { background: #eff6ff; color: #1d4ed8; }
+        .badge-shortlisted { background: #fffbeb; color: #d97706; }
+        .badge-hired { background: #f0fdf4; color: #16a34a; }
+        .badge-rejected { background: #fef2f2; color: #dc2626; }
+
+        .status-pill {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        /* Restricted menu item */
+        .sidebar-item.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .sidebar-item.locked::after {
+            content: '\f44d';
+            font-family: 'bootstrap-icons';
+            margin-left: auto;
+            font-size: 11px;
         }
     </style>
 </head>
-
 <body>
 
-    <!-- ── Spinner Overlay ── -->
-    <div class="spinner-overlay" id="spinnerOverlay">
-        <div class="spinner-border text-primary" role="status"></div>
+<!-- ── Spinner ── -->
+<div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner-border text-primary"></div>
+</div>
+
+<!-- ── Mobile Topbar ── -->
+<div class="mobile-topbar">
+    <button class="mobile-menu-btn" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+    <span class="mobile-brand">Jobs<span>Hunt</span></span>
+    <div style="width:24px;"></div>
+</div>
+
+<!-- ── Mobile Overlay ── -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <h5>Jobs<span>Hunt</span></h5>
+        <div class="role-badge admin" id="roleBadge">ADMIN</div>
     </div>
 
-    <!-- ── Mobile Navbar ── -->
-    <nav class="navbar navbar-dark top-navbar d-md-none">
-        <div class="container-fluid">
-            <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list"></i>
-            </button>
-            <span class="navbar-brand mb-0 h5">Admin Panel</span>
-        </div>
-    </nav>
+    <div class="sidebar-nav">
+        <div class="sidebar-section-label">Main</div>
+        <a href="dashboard.html" class="sidebar-item active">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
 
-    <!-- ── Mobile Sidebar (Offcanvas) ── -->
-    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Admin Panel</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <a href="dashboard.html" class="sidebar-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-            <a href="manageEmployers.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Employers</a>
-            <a href="candidates.html" class="sidebar-link"><i class="bi bi-people me-2"></i> Candidates</a>
-            <a href="applications.html" class="sidebar-link"><i class="bi bi-file-earmark-text me-2"></i>
-                Applications</a>
-            <a href="subAdmins.html" class="sidebar-link"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
-            <a href="companies.html" class="sidebar-link"><i class="fa fa-city me-2"></i> Companies</a>
-            <a href="jobCategories.html" class="active">
-                <i class="bi bi-tags me-2"></i> Job Categories
-            </a>
-            <a href="#" class="sidebar-link" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-        </div>
+        <div class="sidebar-section-label">Management</div>
+        <a href="manageEmployers.html" class="sidebar-item">
+            <i class="bi bi-building"></i> Employers
+        </a>
+        <a href="candidates.html" class="sidebar-item">
+            <i class="bi bi-people"></i> Candidates
+        </a>
+        <a href="applications.html" class="sidebar-item">
+            <i class="bi bi-file-earmark-text"></i> Applications
+        </a>
+        <a href="companies.html" class="sidebar-item">
+            <i class="bi bi-building-fill"></i> Companies
+        </a>
+        <a href="jobCategories.html" class="sidebar-item" id="menuJobCategories">
+            <i class="bi bi-tags"></i> Job Categories
+        </a>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section-label">Admin Only</div>
+        <a href="subAdmins.html" class="sidebar-item" id="menuSubAdmins">
+            <i class="bi bi-shield-lock"></i> Sub Admins
+        </a>
+
+        <div class="sidebar-divider"></div>
+        <button class="sidebar-item" onclick="openProfileModal()">
+            <i class="bi bi-person-circle"></i> My Profile
+        </button>
+        <button class="sidebar-item" onclick="logout()" style="color:#f87171;">
+            <i class="bi bi-box-arrow-right" style="color:#f87171;"></i> Logout
+        </button>
     </div>
 
-    <!-- ── Page Layout ── -->
-    <section class="admin-dashboard">
-        <div class="container-fluid">
-            <div class="row">
-
-                <!-- Desktop Sidebar -->
-                <nav class="col-md-2 d-none d-md-block sidebar p-0">
-                    <div class="position-sticky">
-                        <h4 class="text-white text-center py-3">Admin Panel</h4>
-                        <a href="dashboard.html" class="active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                        <a href="manageEmployers.html"><i class="bi bi-building me-2"></i> Employers</a>
-                        <a href="candidates.html"><i class="bi bi-people me-2"></i> Candidates</a>
-                        <a href="applications.html"><i class="bi bi-file-earmark-text me-2"></i> Applications</a>
-                        <a href="subAdmins.html"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
-                        <a href="companies.html"><i class="bi bi-building me-2"></i> Companies</a>
-                        <a href="jobCategories.html" class="active">
-                <i class="bi bi-tags me-2"></i> Job Categories
-            </a>
-                        <a href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-                    </div>
-                </nav>
-
-                <!-- Main Content -->
-                <main class="col-md-10 ms-sm-auto px-md-4 py-4 main-content">
-
-                    <!-- Page Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h4 class="mb-0 fw-bold">Dashboard</h4>
-                            <small class="text-muted" id="dashboardDate"></small>
-                        </div>
-                        <span class="admin-name-btn" onclick="openProfileModal()" id="adminName">
-                            Welcome, Admin
-                        </span>
-                    </div>
-
-                    <!-- Error Alert -->
-                    <div class="alert alert-danger" id="errorAlert">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <span id="errorMessage">Failed to load dashboard data.</span>
-                    </div>
-
-                    <!-- ── Row 1: Primary Stat Cards ── -->
-                    <div class="row g-3 mb-4">
-
-                        <!-- Total Jobs -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Total Jobs</div>
-                                        <div class="stat-value" id="totalJobs">--</div>
-                                        <div class="stat-sub text-success" id="activeJobsSub"></div>
-                                    </div>
-                                    <div class="icon-box bg-primary bg-opacity-10 text-primary">
-                                        <i class="bi bi-briefcase-fill"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Employers -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Employers</div>
-                                        <div class="stat-value" id="totalRecruiters">--</div>
-                                        <div class="stat-sub text-success" id="activeEmployersSub"></div>
-                                    </div>
-                                    <div class="icon-box bg-success bg-opacity-10 text-success">
-                                        <i class="bi bi-building-fill"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Candidates -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Candidates</div>
-                                        <div class="stat-value" id="totalUsers">--</div>
-                                        <div class="stat-sub text-success" id="activeCandidatesSub"></div>
-                                    </div>
-                                    <div class="icon-box bg-info bg-opacity-10 text-info">
-                                        <i class="bi bi-people-fill"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Total Applications -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Total Applications</div>
-                                        <div class="stat-value" id="totalApplications">--</div>
-                                        <div class="stat-sub text-warning" id="pendingAppsSub"></div>
-                                    </div>
-                                    <div class="icon-box bg-warning bg-opacity-10 text-warning">
-                                        <i class="bi bi-file-earmark-text-fill"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div><!-- /Row 1 -->
-
-                    <!-- ── Row 2: Derived Stat Cards ── -->
-                    <div class="row g-3 mb-4">
-
-                        <!-- Approval Rate -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Approval Rate</div>
-                                        <div class="stat-value text-success" id="approvalRate">--</div>
-                                        <div class="stat-sub text-muted">of all applications</div>
-                                    </div>
-                                    <div class="icon-box bg-success bg-opacity-10 text-success">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                    </div>
-                                </div>
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-success" id="approvalBar" style="width:0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rejection Rate -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Rejection Rate</div>
-                                        <div class="stat-value text-danger" id="rejectionRate">--</div>
-                                        <div class="stat-sub text-muted">of all applications</div>
-                                    </div>
-                                    <div class="icon-box bg-danger bg-opacity-10 text-danger">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </div>
-                                </div>
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-danger" id="rejectionBar" style="width:0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Applications -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Pending Applications</div>
-                                        <div class="stat-value text-warning" id="pendingApps">--</div>
-                                        <div class="stat-sub text-muted">awaiting review</div>
-                                    </div>
-                                    <div class="icon-box bg-warning bg-opacity-10 text-warning">
-                                        <i class="bi bi-hourglass-split"></i>
-                                    </div>
-                                </div>
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-warning" id="pendingBar" style="width:0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Active Employers -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card stat-card p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="stat-label">Active Employers</div>
-                                        <div class="stat-value text-primary" id="activeEmployers">--</div>
-                                        <div class="stat-sub text-muted" id="suspendedEmployersSub"></div>
-                                    </div>
-                                    <div class="icon-box bg-primary bg-opacity-10 text-primary">
-                                        <i class="bi bi-building-check"></i>
-                                    </div>
-                                </div>
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-primary" id="activeEmployersBar" style="width:0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div><!-- /Row 2 -->
-
-                    <!-- ── Row 3: Charts ── -->
-                    <div class="row g-3 mb-4">
-
-                        <!-- Application Status Doughnut -->
-                        <div class="col-lg-4">
-                            <div class="card chart-card p-3 h-100">
-                                <span class="section-title mb-3 d-block">Application Status</span>
-                                <canvas id="appStatusChart" height="220"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Candidate Status Bar -->
-                        <div class="col-lg-4">
-                            <div class="card chart-card p-3 h-100">
-                                <span class="section-title mb-3 d-block">Candidate Status</span>
-                                <canvas id="candidateStatusChart" height="220"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Platform Overview Bar -->
-                        <div class="col-lg-4">
-                            <div class="card chart-card p-3 h-100">
-                                <span class="section-title mb-3 d-block">Platform Overview</span>
-                                <canvas id="overviewChart" height="220"></canvas>
-                            </div>
-                        </div>
-
-                    </div><!-- /Row 3 -->
-
-                    <!-- ── Row 4: Employer Breakdown + Recent Applications ── -->
-                    <div class="row g-3 mb-4">
-
-                        <!-- Employer Status Breakdown -->
-                        <div class="col-lg-4">
-                            <div class="card chart-card p-3 h-100">
-                                <span class="section-title mb-3 d-block">Employer Breakdown</span>
-
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small">Active</span>
-                                    <span class="fw-semibold text-success" id="eb_active">--</span>
-                                </div>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar bg-success" id="eb_activeBar" style="width:0%"></div>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small">Pending</span>
-                                    <span class="fw-semibold text-warning" id="eb_pending">--</span>
-                                </div>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar bg-warning" id="eb_pendingBar" style="width:0%"></div>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small">Suspended</span>
-                                    <span class="fw-semibold text-danger" id="eb_suspended">--</span>
-                                </div>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar bg-danger" id="eb_suspendedBar" style="width:0%"></div>
-                                </div>
-
-                                <hr class="my-2">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted small">Avg apps per employer</span>
-                                    <span class="fw-semibold" id="avgAppsPerEmployer">--</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Applications Table -->
-                        <div class="col-lg-8">
-                            <div class="card chart-card h-100">
-                                <div
-                                    class="card-header bg-white d-flex justify-content-between align-items-center border-0 pt-3 px-3">
-                                    <span class="section-title">Recent Applications</span>
-                                    <a href="applications.html" class="btn btn-sm btn-outline-primary">View All</a>
-                                </div>
-                                <div class="card-body table-responsive pt-0">
-                                    <table class="table table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Candidate</th>
-                                                <th>Job Title</th>
-                                                <th>Employer</th>
-                                                <th>Status</th>
-                                                <th>Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="applicationsTableBody">
-                                            <tr>
-                                                <td colspan="6" class="text-center text-muted py-3">Loading...</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div><!-- /Row 4 -->
-
-                </main><!-- /main content -->
+    <div class="sidebar-footer">
+        <div class="admin-info">
+            <div class="admin-avatar" id="sidebarAvatar">A</div>
+            <div class="admin-info-text">
+                <div class="admin-info-name" id="sidebarName">Admin</div>
+                <div class="admin-info-role" id="sidebarRoleText">Administrator</div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- ===== PROFILE MODAL ===== -->
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+<!-- ── MAIN CONTENT ── -->
+<div class="main-content">
 
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-person-circle me-2"></i>My Profile
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h4 id="pageTitle">Dashboard</h4>
+            <small id="dashboardDate"></small>
+        </div>
+        <div class="topbar-right">
+            <div id="subAdminNotice" style="display:none;">
+                <span class="badge bg-warning text-dark px-3 py-2" style="font-size:12px;">
+                    <i class="bi bi-shield-exclamation me-1"></i> Sub Admin Mode — Limited Access
+                </span>
+            </div>
+            <button class="topbar-btn" onclick="openProfileModal()">
+                <i class="bi bi-person-circle"></i>
+                <span id="adminNameTop">Admin</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger d-none mb-3" id="errorAlert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span id="errorMessage">Failed to load dashboard data.</span>
+        </div>
+
+        <!-- ── ROW 1: Primary Stats ── -->
+        <div class="row g-3 mb-3">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Total Jobs</div>
+                            <div class="stat-value" id="totalJobs">--</div>
+                            <div class="stat-sub text-success" id="activeJobsSub"></div>
+                        </div>
+                        <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;">
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Employers</div>
+                            <div class="stat-value" id="totalRecruiters">--</div>
+                            <div class="stat-sub text-success" id="activeEmployersSub"></div>
+                        </div>
+                        <div class="stat-icon" style="background:#f0fdf4;color:#22c55e;">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Candidates</div>
+                            <div class="stat-value" id="totalUsers">--</div>
+                            <div class="stat-sub text-primary" id="activeCandidatesSub"></div>
+                        </div>
+                        <div class="stat-icon" style="background:#f0f9ff;color:#0ea5e9;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Total Applications</div>
+                            <div class="stat-value" id="totalApplications">--</div>
+                            <div class="stat-sub text-warning" id="pendingAppsSub"></div>
+                        </div>
+                        <div class="stat-icon" style="background:#fffbeb;color:#f59e0b;">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ROW 2: Derived Stats ── -->
+        <div class="row g-3 mb-3">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Approval Rate</div>
+                            <div class="stat-value text-success" id="approvalRate">--</div>
+                            <div class="stat-sub text-muted">of all applications</div>
+                        </div>
+                        <div class="stat-icon" style="background:#f0fdf4;color:#22c55e;">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-success" id="approvalBar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Rejection Rate</div>
+                            <div class="stat-value text-danger" id="rejectionRate">--</div>
+                            <div class="stat-sub text-muted">of all applications</div>
+                        </div>
+                        <div class="stat-icon" style="background:#fef2f2;color:#ef4444;">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-danger" id="rejectionBar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Pending Applications</div>
+                            <div class="stat-value text-warning" id="pendingApps">--</div>
+                            <div class="stat-sub text-muted">awaiting review</div>
+                        </div>
+                        <div class="stat-icon" style="background:#fffbeb;color:#f59e0b;">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-warning" id="pendingBar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Active Employers</div>
+                            <div class="stat-value text-primary" id="activeEmployers">--</div>
+                            <div class="stat-sub text-muted" id="suspendedEmployersSub"></div>
+                        </div>
+                        <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;">
+                            <i class="bi bi-building-check"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-primary" id="activeEmployersBar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ROW 3: Charts ── -->
+        <div class="row g-3 mb-3">
+            <div class="col-lg-4">
+                <div class="chart-card h-100">
+                    <div class="chart-card-title"><i class="bi bi-pie-chart-fill"></i> Application Status</div>
+                    <canvas id="appStatusChart" height="220"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-card h-100">
+                    <div class="chart-card-title"><i class="bi bi-bar-chart-fill"></i> Candidate Status</div>
+                    <canvas id="candidateStatusChart" height="220"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-card h-100">
+                    <div class="chart-card-title"><i class="bi bi-graph-up"></i> Platform Overview</div>
+                    <canvas id="overviewChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ROW 4: Employer Breakdown + Applications Table ── -->
+        <div class="row g-3 mb-3">
+            <div class="col-lg-4">
+                <div class="chart-card h-100">
+                    <div class="chart-card-title"><i class="bi bi-buildings"></i> Employer Breakdown</div>
+
+                    <div class="prog-row">
+                        <span class="prog-label">Active</span>
+                        <span class="prog-val text-success" id="eb_active">--</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" id="eb_activeBar" style="width:0%"></div>
+                    </div>
+
+                    <div class="prog-row">
+                        <span class="prog-label">Pending</span>
+                        <span class="prog-val text-warning" id="eb_pending">--</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" id="eb_pendingBar" style="width:0%"></div>
+                    </div>
+
+                    <div class="prog-row">
+                        <span class="prog-label">Suspended</span>
+                        <span class="prog-val text-danger" id="eb_suspended">--</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-danger" id="eb_suspendedBar" style="width:0%"></div>
+                    </div>
+
+                    <hr style="margin:12px 0;">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;">
+                        <span style="color:#64748b;">Avg apps per employer</span>
+                        <span style="font-weight:600;" id="avgAppsPerEmployer">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="table-card h-100">
+                    <div class="table-card-header">
+                        <span class="table-card-title">
+                            <i class="bi bi-clock-history me-2" style="color:var(--teal);"></i>
+                            Recent Applications
+                        </span>
+                        <a href="applications.html" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" style="font-size:13.5px;">
+                            <thead style="background:#f8fafc;">
+                                <tr>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">#</th>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Candidate</th>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Job Title</th>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Company</th>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Status</th>
+                                    <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                                        Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ROW 5: Admin Only — Sub Admin Management ── -->
+        <div class="row g-3 mb-3" id="adminOnlySection">
+            <div class="col-12">
+                <div class="chart-card restricted-card">
+                    <div class="chart-card-title">
+                        <i class="bi bi-shield-lock-fill"></i> Sub Admin Management
+                        <span class="badge bg-primary ms-2" style="font-size:10px;">Admin Only</span>
+                    </div>
+                    <div class="restricted-overlay" id="subAdminRestricted">
+                        <i class="bi bi-lock-fill"></i>
+                        <p>This section is restricted to <strong>Admins only</strong>.</p>
+                        <small style="color:#94a3b8;">Contact your administrator for access.</small>
+                    </div>
+                    <div class="row g-3" id="subAdminContent">
+                        <div class="col-md-4">
+                            <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e5e7eb;">
+                                <div style="font-size:12px;color:#64748b;margin-bottom:4px;">Total Sub Admins</div>
+                                <div style="font-size:24px;font-weight:700;color:#0f172a;" id="totalSubAdmins">--</div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 d-flex align-items-center">
+                            <a href="subAdmins.html" class="btn btn-primary btn-sm me-2">
+                                <i class="bi bi-people me-1"></i> Manage Sub Admins
+                            </a>
+                            <span style="font-size:13px;color:#64748b;">Create, activate or deactivate sub admin accounts.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div><!-- /main-content -->
+
+<!-- ── PROFILE MODAL ── -->
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:var(--navy);">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-person-circle me-2"></i>My Profile
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded" style="background:#f8fafc;">
+                    <div class="admin-avatar" style="width:52px;height:52px;font-size:18px;" id="profileAvatar">A</div>
+                    <div>
+                        <h5 class="mb-1" id="profileDisplayName">--</h5>
+                        <p class="text-muted mb-1 small" id="profileDisplayEmail">--</p>
+                        <span class="badge" id="profileDisplayRole" style="background:var(--navy);">--</span>
+                    </div>
                 </div>
 
-                <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" id="profileTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="switchProfileTab('editProfile', this); return false;">
+                            <i class="bi bi-pencil me-1"></i> Edit Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="switchProfileTab('changePassword', this); return false;">
+                            <i class="bi bi-lock me-1"></i> Change Password
+                        </a>
+                    </li>
+                </ul>
 
-                    <!-- Avatar placeholder + info -->
-                    <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                            style="width:60px;height:60px;font-size:24px;color:white;">
-                            <i class="bi bi-person"></i>
+                <!-- Edit Profile -->
+                <div id="tab_editProfile">
+                    <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated successfully!</div>
+                    <div class="alert alert-danger d-none" id="editProfileError"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name</label>
+                            <input type="text" class="form-control" id="p_fullname"/>
                         </div>
-                        <div>
-                            <h5 class="mb-1" id="profileDisplayName">--</h5>
-                            <p class="text-muted mb-1" id="profileDisplayEmail">--</p>
-                            <span class="badge bg-success" id="profileDisplayRole">--</span>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Username</label>
+                            <input type="text" class="form-control" id="p_username"/>
                         </div>
-                    </div>
-
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs mb-3" id="profileTabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#" onclick="switchTab('editProfile', this)">
-                                <i class="bi bi-pencil me-1"></i> Edit Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" onclick="switchTab('changePassword', this)">
-                                <i class="bi bi-lock me-1"></i> Change Password
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- Tab: Edit Profile -->
-                    <div id="tab_editProfile">
-                        <div class="alert alert-success d-none" id="editProfileSuccess">
-                            Profile updated successfully!
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" class="form-control" id="p_email" disabled/>
+                            <small class="text-muted">Email cannot be changed</small>
                         </div>
-                        <div class="alert alert-danger d-none" id="editProfileError"></div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Full Name</label>
-                                <input type="text" class="form-control" id="p_fullname" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Username</label>
-                                <input type="text" class="form-control" id="p_username" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Email</label>
-                                <input type="email" class="form-control" id="p_email" disabled />
-                                <small class="text-muted">Email cannot be changed</small>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Phone</label>
-                                <input type="number" class="form-control" id="p_phone" />
-                            </div>
-                        </div>
-
-                        <div class="mt-3 text-end">
-                            <button class="btn btn-success" id="saveProfileBtn" onclick="saveProfile()">
-                                <span id="saveProfileText">Save Changes</span>
-                                <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                            </button>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="number" class="form-control" id="p_phone"/>
                         </div>
                     </div>
-
-                    <!-- Tab: Change Password -->
-                    <div id="tab_changePassword" style="display:none;">
-                        <div class="alert alert-success d-none" id="changePwSuccess">
-                            Password changed successfully!
-                        </div>
-                        <div class="alert alert-danger d-none" id="changePwError"></div>
-
-                        <form onsubmit="return false;">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Current Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="p_currentPw"
-                                        placeholder="Enter current password" />
-                                    <button class="btn btn-outline-secondary" type="button"
-                                        onclick="togglePw('p_currentPw', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">New Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="p_newPw"
-                                        placeholder="Enter new password" />
-                                    <button class="btn btn-outline-secondary" type="button"
-                                        onclick="togglePw('p_newPw', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Confirm New Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="p_confirmPw"
-                                        placeholder="Confirm new password" />
-                                    <button class="btn btn-outline-secondary" type="button"
-                                        onclick="togglePw('p_confirmPw', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="text-end">
-                                <button class="btn btn-warning" id="changePwBtn" type="button"
-                                    onclick="changePassword()">
-                                    <span id="changePwText">Change Password</span>
-                                    <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                                </button>
-                            </div>
-                        </form>
+                    <div class="mt-3 text-end">
+                        <button class="btn btn-success" onclick="saveProfile()">
+                            <span id="saveProfileText">Save Changes</span>
+                            <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
                     </div>
+                </div>
 
-                </div><!-- /.modal-body -->
+                <!-- Change Password -->
+                <div id="tab_changePassword" style="display:none;">
+                    <div class="alert alert-success d-none" id="changePwSuccess">Password changed successfully!</div>
+                    <div class="alert alert-danger d-none" id="changePwError"></div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Current Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="p_currentPw" placeholder="Enter current password"/>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_currentPw', this)"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">New Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="p_newPw" placeholder="Enter new password"/>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_newPw', this)"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Confirm Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="p_confirmPw" placeholder="Confirm new password"/>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_confirmPw', this)"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-warning" onclick="changePassword()">
+                            <span id="changePwText">Change Password</span>
+                            <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../config.js"></script>
+<script src="../assets/js/adminSidepanel/adminsidebar.js"></script>
+<script>
+    /* ── Role detection ── */
+    const ROLE = localStorage.getItem("role") || "ADMIN";
+    const IS_SUB_ADMIN = ROLE === "SUB_ADMIN";
+    const FULL_NAME = localStorage.getItem("fullName") || (IS_SUB_ADMIN ? "Sub Admin" : "Admin");
+
+    /* ── Protect page ── */
+
+    protectAdminPage();
 
 
-     <script src="/assets/js/bootstrap.js"></script>
-    <script src="../config.js"></script>
-    <script>
-        protectAdminPage();
-    </script>
+// protectAdminPage(); // commented out temporarily
+console.log("role in dashboard:", localStorage.getItem("role"));
+console.log("loggedIn:", localStorage.getItem("loggedIn"));
+    /* ── Apply role restrictions immediately ── */
+    function applyRoleRestrictions() {
+        const initials = FULL_NAME.split(" ").map(w => w[0]).join("").substring(0,2).toUpperCase();
 
-    <script>
-        /* ─────────────────────────────────────────
-        Init
-        ───────────────────────────────────────── */
-        document.getElementById("adminName").innerText =
-            "Welcome, " + (localStorage.getItem("fullName") || "Admin");
+        // Sidebar info
+        document.getElementById("sidebarName").innerText = FULL_NAME;
+        document.getElementById("sidebarAvatar").innerText = initials;
+        document.getElementById("sidebarRoleText").innerText = IS_SUB_ADMIN ? "Sub Administrator" : "Administrator";
 
-        document.getElementById("dashboardDate").innerText =
-            new Date().toLocaleDateString("en-IN", {
-                weekday: "long", year: "numeric", month: "long", day: "numeric"
-            });
-
-        /* ─────────────────────────────────────────
-        Helpers
-        ───────────────────────────────────────── */
-        function showSpinner() { document.getElementById("spinnerOverlay").classList.add("show"); }
-        function hideSpinner() { document.getElementById("spinnerOverlay").classList.remove("show"); }
-
-        function showError(msg) {
-            document.getElementById("errorMessage").innerText = msg;
-            document.getElementById("errorAlert").style.display = "block";
+        // Role badge
+        const badge = document.getElementById("roleBadge");
+        if (IS_SUB_ADMIN) {
+            badge.innerText = "SUB ADMIN";
+            badge.className = "role-badge subadmin";
+        } else {
+            badge.innerText = "ADMIN";
+            badge.className = "role-badge admin";
         }
 
-        function pct(num, den) { return den === 0 ? 0 : Math.round((num / den) * 100); }
-        function pctStr(num, den) { return pct(num, den) + "%"; }
+        // Topbar
+        document.getElementById("adminNameTop").innerText = FULL_NAME;
+        document.getElementById("dashboardDate").innerText = new Date().toLocaleDateString("en-IN", {
+            weekday: "long", year: "numeric", month: "long", day: "numeric"
+        });
 
-        function formatDate(d) {
-            if (!d) return "N/A";
-            return new Date(d).toLocaleDateString("en-IN", {
-                day: "2-digit", month: "short", year: "numeric"
-            });
+        if (IS_SUB_ADMIN) {
+            // Show notice banner
+            document.getElementById("subAdminNotice").style.display = "block";
+
+            // Lock Sub Admins menu
+            const menuSubAdmins = document.getElementById("menuSubAdmins");
+            menuSubAdmins.classList.add("locked");
+            menuSubAdmins.removeAttribute("href");
+
+            // Lock Job Categories (view only — disable add/delete in that page)
+            // Just show a tooltip hint
+            document.getElementById("menuJobCategories").title = "View only — cannot add or delete";
+
+            // Show restricted overlay on Sub Admin Management section
+            document.getElementById("subAdminRestricted").classList.add("show");
+            document.getElementById("subAdminContent").style.display = "none";
+        } else {
+            // Admin: hide the notice
+            document.getElementById("subAdminNotice").style.display = "none";
         }
+    }
 
-        // ✅ Matches your actual ApplicationStatus enum
-        const statusMap = {
-            "APPLIED": { cls: "bg-primary text-white", label: "Applied" },
-            "SHORTLISTED": { cls: "bg-warning text-dark", label: "Shortlisted" },
-            "HIRED": { cls: "bg-success text-white", label: "Hired" },
-            "REJECTED": { cls: "bg-danger text-white", label: "Rejected" },
+    /* ── Helpers ── */
+    function showSpinner() { document.getElementById("spinnerOverlay").classList.add("show"); }
+    function hideSpinner() { document.getElementById("spinnerOverlay").classList.remove("show"); }
+    function pct(n, d) { return d === 0 ? 0 : Math.round((n / d) * 100); }
+    function pctStr(n, d) { return pct(n, d) + "%"; }
+    function formatDate(d) {
+        if (!d) return "N/A";
+        return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    function getStatusBadge(status) {
+        const map = {
+            "APPLIED":     { bg: "#eff6ff", color: "#1d4ed8" },
+            "SHORTLISTED": { bg: "#fffbeb", color: "#d97706" },
+            "HIRED":       { bg: "#f0fdf4", color: "#16a34a" },
+            "REJECTED":    { bg: "#fef2f2", color: "#dc2626" }
         };
+        const s = map[status] || { bg: "#f1f5f9", color: "#64748b" };
+        return `<span style="background:${s.bg};color:${s.color};padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600;">${status || "N/A"}</span>`;
+    }
 
-        function getStatusBadge(status) {
-            const badge = statusMap[status] || { cls: "bg-secondary text-white", label: status };
-            return `<span class="badge ${badge.cls}">${badge.label}</span>`;
-        }
-
-        /* ─────────────────────────────────────────
-        Chart builder
-        ───────────────────────────────────────── */
-        const charts = {};
-
-        function buildChart(id, type, labels, datasets, options = {}) {
-            if (charts[id]) charts[id].destroy();
-            const ctx = document.getElementById(id).getContext("2d");
-            charts[id] = new Chart(ctx, {
-                type,
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: "bottom",
-                            labels: { boxWidth: 12, font: { size: 11 } }
-                        }
-                    },
-                    ...options
-                }
-            });
-        }
-
-        /* ─────────────────────────────────────────
-        Load Dashboard
-        ───────────────────────────────────────── */
-        async function loadDashboard() {
-            showSpinner();
-            try {
-                // ✅ fetchWithRefresh sends cookie, await all responses
-                const [jobsRes, recruitersRes, applicationsRes, candidatesRes] = await Promise.all([
-                    fetchWithRefresh(`${API_BASE_URL}/admin/jobs`),
-                    fetchWithRefresh(`${API_BASE_URL}/admin/recruiters`),
-                    fetchWithRefresh(`${API_BASE_URL}/admin/applications`),  // updated endpit add /all
-                    fetchWithRefresh(`${API_BASE_URL}/admin/candidates`)
-                ]);
-
-                // ✅ Check 403 before parsing
-                if (jobsRes.status === 403 || recruitersRes.status === 403) {
-                    adminLogout();
-                    return;
-                }
-
-                // ✅ Parse all responses
-                const jobsData = await jobsRes.json();
-                const recruitersData = await recruitersRes.json();
-                const applicationsData = await applicationsRes.json();
-                const candidatesData = await candidatesRes.json();
-
-                // ✅ Safely extract arrays (handles both List and Page responses)
-                const jobs = Array.isArray(jobsData) ? jobsData : (jobsData.content || []);
-                const recruiters = Array.isArray(recruitersData) ? recruitersData : (recruitersData.content || []);
-                const applications = Array.isArray(applicationsData) ? applicationsData : (applicationsData.content || []);
-                const candidates = Array.isArray(candidatesData) ? candidatesData : (candidatesData.content || []);
-
-                /* ── Primary counts ── */
-                document.getElementById("totalJobs").innerText = jobs.length;
-                document.getElementById("totalRecruiters").innerText = recruiters.length;
-                document.getElementById("totalUsers").innerText = candidates.length;
-                document.getElementById("totalApplications").innerText = applications.length;
-
-                /* ── Candidate stats ── */
-                const activeCandidates = candidates.filter(c => c.userStatus === "ACTIVE").length;
-                const inactiveCandidates = candidates.length - activeCandidates;
-                document.getElementById("activeCandidatesSub").innerText =
-                    `${activeCandidates} active · ${inactiveCandidates} inactive`;
-
-                /* ── Employer stats ── */
-                const activeEmp = recruiters.filter(r => r.recruiterStatus === "ACTIVE").length;
-                const pendingEmp = recruiters.filter(r => r.recruiterStatus === "PENDING").length;
-                const suspendedEmp = recruiters.filter(r => r.recruiterStatus === "SUSPENDED").length;
-
-                document.getElementById("activeEmployersSub").innerText =
-                    `${activeEmp} active · ${pendingEmp} pending`;
-                document.getElementById("activeEmployers").innerText = activeEmp;
-                document.getElementById("suspendedEmployersSub").innerText =
-                    `${suspendedEmp} suspended · ${pendingEmp} pending`;
-                document.getElementById("activeEmployersBar").style.width =
-                    pctStr(activeEmp, recruiters.length);
-
-                document.getElementById("eb_active").innerText = activeEmp;
-                document.getElementById("eb_pending").innerText = pendingEmp;
-                document.getElementById("eb_suspended").innerText = suspendedEmp;
-                document.getElementById("eb_activeBar").style.width = pctStr(activeEmp, recruiters.length);
-                document.getElementById("eb_pendingBar").style.width = pctStr(pendingEmp, recruiters.length);
-                document.getElementById("eb_suspendedBar").style.width = pctStr(suspendedEmp, recruiters.length);
-                document.getElementById("avgAppsPerEmployer").innerText =
-                    recruiters.length ? (applications.length / recruiters.length).toFixed(1) : "0";
-
-                /* ── Application stats — ✅ uses correct enum values ── */
-                const total = applications.length;
-                const hired = applications.filter(a => a.applicationStatus === "HIRED").length;
-                const rejected = applications.filter(a => a.applicationStatus === "REJECTED").length;
-                const shortlisted = applications.filter(a => a.applicationStatus === "SHORTLISTED").length;
-                const applied = applications.filter(a => a.applicationStatus === "APPLIED").length;
-
-                document.getElementById("approvalRate").innerText = pctStr(hired, total);
-                document.getElementById("rejectionRate").innerText = pctStr(rejected, total);
-                document.getElementById("pendingApps").innerText = applied + shortlisted;
-                document.getElementById("approvalBar").style.width = pctStr(hired, total);
-                document.getElementById("rejectionBar").style.width = pctStr(rejected, total);
-                document.getElementById("pendingBar").style.width = pctStr(applied + shortlisted, total);
-                document.getElementById("activeJobsSub").innerText = `${jobs.length} listed`;
-                document.getElementById("pendingAppsSub").innerText = `${applied} pending review`;
-
-                /* ── Chart 1: Application Status Doughnut ── */
-                buildChart(
-                    "appStatusChart", "doughnut",
-                    ["Applied", "Shortlisted", "Hired", "Rejected"],
-                    [{
-                        data: [applied, shortlisted, hired, rejected],
-                        backgroundColor: ["#0d6efd", "#ffc107", "#198754", "#dc3545"],
-                        borderWidth: 2
-                    }]
-                );
-
-                /* ── Chart 2: Candidate Status Bar ── */
-                buildChart(
-                    "candidateStatusChart", "bar",
-                    ["Active", "Inactive"],
-                    [{
-                        label: "Candidates",
-                        data: [activeCandidates, inactiveCandidates],
-                        backgroundColor: ["#0d6efd", "#adb5bd"],
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }],
-                    {
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                    }
-                );
-
-                /* ── Chart 3: Platform Overview Bar ── */
-                buildChart(
-                    "overviewChart", "bar",
-                    ["Jobs", "Employers", "Candidates", "Applications"],
-                    [{
-                        label: "Count",
-                        data: [jobs.length, recruiters.length, candidates.length, applications.length],
-                        backgroundColor: ["#0d6efd", "#198754", "#0dcaf0", "#ffc107"],
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }],
-                    {
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                );
-
-                /* ── Recent Applications Table ── */
-                const tbody = document.getElementById("applicationsTableBody");
-                if (!applications.length) {
-                    tbody.innerHTML = `<tr>
-        <td colspan="6" class="text-center text-muted py-3">
-            No applications found
-        </td>
-    </tr>`;
-                } else {
-                    tbody.innerHTML = applications.slice(0, 6).map((app, i) => `
-    <tr>
-        <td>${i + 1}</td>
-        <td>
-            <strong>${app.candidateName ?? "N/A"}</strong><br>
-            <small class="text-muted">${app.candidateEmail ?? ""}</small>
-        </td>
-        <td>${app.jobTitle ?? "N/A"}</td>
-        <td>${app.companyName ?? "N/A"}</td>
-        <td>${getStatusBadge(app.applicationStatus)}</td>
-        <td>${formatDate(app.appliedAt)}</td>
-    </tr>`).join("");
-                }
-
-            } catch (err) {
-                console.error("Dashboard error:", err);
-                showError("Failed to load dashboard stats. Please refresh.");
-            } finally {
-                hideSpinner();
+    /* ── Charts ── */
+    const charts = {};
+    function buildChart(id, type, labels, datasets, extra = {}) {
+        if (charts[id]) charts[id].destroy();
+        charts[id] = new Chart(document.getElementById(id).getContext("2d"), {
+            type,
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } } },
+                ...extra
             }
-        }
+        });
+    }
 
-        /* ─────────────────────────────────────────
-        Profile Modal
-        ───────────────────────────────────────── */
-        async function openProfileModal() {
-            switchTab("editProfile", document.querySelector("#profileTabs .nav-link"));
-            ["editProfileSuccess", "editProfileError", "changePwSuccess", "changePwError"]
-                .forEach(id => document.getElementById(id).classList.add("d-none"));
-            ["p_currentPw", "p_newPw", "p_confirmPw"]
-                .forEach(id => document.getElementById(id).value = "");
+    /* ── Load Dashboard ── */
+    async function loadDashboard() {
+        showSpinner();
+        try {
+            const [jobsRes, recruitersRes, applicationsRes, candidatesRes] = await Promise.all([
+                fetchWithRefresh(`${API_BASE_URL}/admin/jobs`),
+                fetchWithRefresh(`${API_BASE_URL}/admin/recruiters`),
+                fetchWithRefresh(`${API_BASE_URL}/admin/applications`),
+                fetchWithRefresh(`${API_BASE_URL}/admin/candidates`)
+            ]);
 
-            new bootstrap.Modal(document.getElementById("profileModal")).show();
-
-            try {
-                // ✅ fetchWithRefresh sends cookie
-                const response = await fetchWithRefresh(`${API_BASE_URL}/auth/me`);
-                const data = await response.json();
-
-                const displayName = data.fullName || data.username || "Admin";
-                document.getElementById("profileDisplayName").innerText = displayName;
-                document.getElementById("profileDisplayEmail").innerText = data.username || "";
-                document.getElementById("profileDisplayRole").innerText = data.role || "ADMIN";
-                document.getElementById("p_fullname").value = data.fullName || "";
-                document.getElementById("p_username").value = data.username || "";
-                document.getElementById("p_email").value = data.username || "";
-                document.getElementById("p_phone").value = data.phone || "";
-                document.getElementById("adminName").innerText = "Welcome, " + displayName;
-                localStorage.setItem("fullName", displayName);
-
-            } catch (err) {
-                console.error("Failed to load profile:", err);
+            if ([jobsRes, recruitersRes, applicationsRes, candidatesRes].some(r => r.status === 403)) {
+                adminLogout(); return;
             }
-        }
 
-        function switchTab(tabName, clickedLink) {
-            document.getElementById("tab_editProfile").style.display = "none";
-            document.getElementById("tab_changePassword").style.display = "none";
-            document.getElementById("tab_" + tabName).style.display = "block";
-            document.querySelectorAll("#profileTabs .nav-link")
-                .forEach(l => l.classList.remove("active"));
-            clickedLink.classList.add("active");
-        }
+            const jobs        = await jobsRes.json().then(d => Array.isArray(d) ? d : d.content || []);
+            const recruiters  = await recruitersRes.json().then(d => Array.isArray(d) ? d : d.content || []);
+            const applications= await applicationsRes.json().then(d => Array.isArray(d) ? d : d.content || []);
+            const candidates  = await candidatesRes.json().then(d => Array.isArray(d) ? d : d.content || []);
 
-        /* ─────────────────────────────────────────
-        Save Profile
-        ───────────────────────────────────────── */
-        async function saveProfile() {
-            const fullname = document.getElementById("p_fullname").value.trim();
-            const username = document.getElementById("p_username").value.trim();
-            const phone = document.getElementById("p_phone").value.trim();
-            const successEl = document.getElementById("editProfileSuccess");
-            const errorEl = document.getElementById("editProfileError");
+            // Primary counts
+            document.getElementById("totalJobs").innerText = jobs.length;
+            document.getElementById("totalRecruiters").innerText = recruiters.length;
+            document.getElementById("totalUsers").innerText = candidates.length;
+            document.getElementById("totalApplications").innerText = applications.length;
+            document.getElementById("activeJobsSub").innerText = `${jobs.length} listed`;
 
-            successEl.classList.add("d-none");
-            errorEl.classList.add("d-none");
+            // Candidates
+            const activeCandidates = candidates.filter(c => c.userStatus === "ACTIVE").length;
+            document.getElementById("activeCandidatesSub").innerText = `${activeCandidates} active`;
 
-            const btn = document.getElementById("saveProfileBtn");
-            const btnText = document.getElementById("saveProfileText");
-            const spinner = document.getElementById("saveProfileSpinner");
-            btn.disabled = true;
-            btnText.innerText = "Saving...";
-            spinner.classList.remove("d-none");
+            // Employers
+            const activeEmp    = recruiters.filter(r => r.recruiterStatus === "ACTIVE").length;
+            const pendingEmp   = recruiters.filter(r => r.recruiterStatus === "PENDING").length;
+            const suspendedEmp = recruiters.filter(r => r.recruiterStatus === "SUSPENDED").length;
 
-            try {
-                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/update-profile`, {
-                    method: "PUT",
-                    body: JSON.stringify({ // ✅ JSON.stringify
-                        fullname, username,
-                        phone: phone ? Number(phone) : null
-                    })
-                });
+            document.getElementById("activeEmployersSub").innerText = `${activeEmp} active · ${pendingEmp} pending`;
+            document.getElementById("activeEmployers").innerText = activeEmp;
+            document.getElementById("suspendedEmployersSub").innerText = `${suspendedEmp} suspended · ${pendingEmp} pending`;
+            document.getElementById("activeEmployersBar").style.width = pctStr(activeEmp, recruiters.length);
 
-                if (!res.ok) throw new Error("Failed to update profile");
+            document.getElementById("eb_active").innerText = activeEmp;
+            document.getElementById("eb_pending").innerText = pendingEmp;
+            document.getElementById("eb_suspended").innerText = suspendedEmp;
+            document.getElementById("eb_activeBar").style.width = pctStr(activeEmp, recruiters.length);
+            document.getElementById("eb_pendingBar").style.width = pctStr(pendingEmp, recruiters.length);
+            document.getElementById("eb_suspendedBar").style.width = pctStr(suspendedEmp, recruiters.length);
+            document.getElementById("avgAppsPerEmployer").innerText =
+                recruiters.length ? (applications.length / recruiters.length).toFixed(1) : "0";
 
-                successEl.classList.remove("d-none");
-                const displayName = fullname || username;
-                document.getElementById("profileDisplayName").innerText = displayName;
-                document.getElementById("adminName").innerText = "Welcome, " + displayName;
-                localStorage.setItem("fullName", displayName);
+            // Applications stats
+            const total       = applications.length;
+            const hired       = applications.filter(a => a.applicationStatus === "HIRED").length;
+            const rejected    = applications.filter(a => a.applicationStatus === "REJECTED").length;
+            const shortlisted = applications.filter(a => a.applicationStatus === "SHORTLISTED").length;
+            const applied     = applications.filter(a => a.applicationStatus === "APPLIED").length;
 
-            } catch (err) {
-                errorEl.innerText = err.message || "Failed to update profile.";
-                errorEl.classList.remove("d-none");
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = "Save Changes";
-                spinner.classList.add("d-none");
+            document.getElementById("approvalRate").innerText = pctStr(hired, total);
+            document.getElementById("rejectionRate").innerText = pctStr(rejected, total);
+            document.getElementById("pendingApps").innerText = applied + shortlisted;
+            document.getElementById("pendingAppsSub").innerText = `${applied} pending review`;
+            document.getElementById("approvalBar").style.width = pctStr(hired, total);
+            document.getElementById("rejectionBar").style.width = pctStr(rejected, total);
+            document.getElementById("pendingBar").style.width = pctStr(applied + shortlisted, total);
+
+            // Admin only — Sub Admin count
+            if (!IS_SUB_ADMIN) {
+                document.getElementById("totalSubAdmins").innerText = "--";
             }
-        }
 
-        /* ─────────────────────────────────────────
-        Change Password
-        ───────────────────────────────────────── */
-        async function changePassword() {
-            const currentPw = document.getElementById("p_currentPw").value.trim();
-            const newPw = document.getElementById("p_newPw").value.trim();
-            const confirmPw = document.getElementById("p_confirmPw").value.trim();
-            const successEl = document.getElementById("changePwSuccess");
-            const errorEl = document.getElementById("changePwError");
+            // Charts
+            buildChart("appStatusChart", "doughnut",
+                ["Applied", "Shortlisted", "Hired", "Rejected"],
+                [{ data: [applied, shortlisted, hired, rejected],
+                   backgroundColor: ["#3b82f6", "#f59e0b", "#22c55e", "#ef4444"],
+                   borderWidth: 2 }]
+            );
 
-            successEl.classList.add("d-none");
-            errorEl.classList.add("d-none");
+            buildChart("candidateStatusChart", "bar",
+                ["Active", "Inactive"],
+                [{ label: "Candidates",
+                   data: [activeCandidates, candidates.length - activeCandidates],
+                   backgroundColor: ["#3b82f6", "#cbd5e1"],
+                   borderRadius: 6, borderSkipped: false }],
+                { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            );
 
-            if (!currentPw || !newPw || !confirmPw) {
-                errorEl.innerText = "Please fill all password fields.";
-                errorEl.classList.remove("d-none"); return;
-            }
-            if (newPw !== confirmPw) {
-                errorEl.innerText = "New passwords do not match.";
-                errorEl.classList.remove("d-none"); return;
-            }
-            if (newPw.length < 6) {
-                errorEl.innerText = "Password must be at least 6 characters.";
-                errorEl.classList.remove("d-none"); return;
-            } const btn = document.getElementById("changePwBtn"); const
-                btnText = document.getElementById("changePwText"); const spinner = document.getElementById("changePwSpinner");
-            btn.disabled = true; btnText.innerText = "Changing..."; spinner.classList.remove("d-none"); try {
-                const res = await
-                    fetchWithRefresh(`${API_BASE_URL}/auth/change-password`, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            currentPassword: currentPw, newPassword: newPw
-                        })
-                    });
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || "Failed to change password");
-                } successEl.classList.remove("d-none");
-                ["p_currentPw", "p_newPw", "p_confirmPw"].forEach(id => document.getElementById(id).value = "");
+            buildChart("overviewChart", "bar",
+                ["Jobs", "Employers", "Candidates", "Apps"],
+                [{ label: "Count",
+                   data: [jobs.length, recruiters.length, candidates.length, applications.length],
+                   backgroundColor: ["#3b82f6", "#22c55e", "#0ea5e9", "#f59e0b"],
+                   borderRadius: 6, borderSkipped: false }],
+                { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            );
 
-            } catch (err) {
-                errorEl.innerText = err.message || "Failed to change password.";
-                errorEl.classList.remove("d-none");
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = "Change Password";
-                spinner.classList.add("d-none");
-            }
-        }
-
-        /* ─────────────────────────────────────────
-        Password Toggle
-        ───────────────────────────────────────── */
-        function togglePw(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            // Recent Applications Table
+            const tbody = document.getElementById("applicationsTableBody");
+            if (!applications.length) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">No applications found</td></tr>`;
             } else {
-                input.type = "password";
-                btn.innerHTML = '<i class="bi bi-eye"></i>';
+                tbody.innerHTML = applications.slice(0, 6).map((app, i) => `
+                    <tr>
+                        <td style="padding:12px 16px;color:#64748b;">${i + 1}</td>
+                        <td style="padding:12px 16px;">
+                            <strong>${app.candidateName || "N/A"}</strong><br>
+                            <small style="color:#94a3b8;">${app.candidateEmail || ""}</small>
+                        </td>
+                        <td style="padding:12px 16px;">${app.jobTitle || "N/A"}</td>
+                        <td style="padding:12px 16px;color:#64748b;">${app.companyName || "N/A"}</td>
+                        <td style="padding:12px 16px;">${getStatusBadge(app.applicationStatus)}</td>
+                        <td style="padding:12px 16px;color:#94a3b8;font-size:12.5px;">${formatDate(app.appliedAt)}</td>
+                    </tr>`).join("");
             }
+
+        } catch (err) {
+            console.error("Dashboard error:", err);
+            document.getElementById("errorAlert").classList.remove("d-none");
+        } finally {
+            hideSpinner();
         }
+    }
 
-        /* ─────────────────────────────────────────
-        Logout
-        ───────────────────────────────────────── */
-        function logout() { adminLogout(); }
+    /* ── Profile Modal ── */
+    async function openProfileModal() {
+        ["editProfileSuccess","editProfileError","changePwSuccess","changePwError"]
+            .forEach(id => document.getElementById(id).classList.add("d-none"));
+        ["p_currentPw","p_newPw","p_confirmPw"]
+            .forEach(id => document.getElementById(id).value = "");
+        switchProfileTab("editProfile", document.querySelector("#profileTabs .nav-link"));
+        new bootstrap.Modal(document.getElementById("profileModal")).show();
+        try {
+            const res = await fetchWithRefresh(`${API_BASE_URL}/auth/me`);
+            const data = await res.json();
+            const name = data.fullName || data.username || "Admin";
+            const initials = name.split(" ").map(w=>w[0]).join("").substring(0,2).toUpperCase();
+            document.getElementById("profileDisplayName").innerText = name;
+            document.getElementById("profileDisplayEmail").innerText = data.username || "";
+            document.getElementById("profileDisplayRole").innerText = data.role || ROLE;
+            document.getElementById("profileAvatar").innerText = initials;
+            document.getElementById("p_fullname").value = data.fullName || "";
+            document.getElementById("p_username").value = data.username || "";
+            document.getElementById("p_email").value = data.username || "";
+            document.getElementById("p_phone").value = data.phone || "";
+        } catch(e) { console.error(e); }
+    }
 
-        /* ─────────────────────────────────────────
-        Boot
-        ───────────────────────────────────────── */
-        loadDashboard();
+    function switchProfileTab(name, link) {
+        document.getElementById("tab_editProfile").style.display = "none";
+        document.getElementById("tab_changePassword").style.display = "none";
+        document.getElementById("tab_" + name).style.display = "block";
+        document.querySelectorAll("#profileTabs .nav-link").forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+    }
 
-    </script>
+    async function saveProfile() {
+        const fullname = document.getElementById("p_fullname").value.trim();
+        const username = document.getElementById("p_username").value.trim();
+        const phone = document.getElementById("p_phone").value.trim();
+        const successEl = document.getElementById("editProfileSuccess");
+        const errorEl = document.getElementById("editProfileError");
+        successEl.classList.add("d-none");
+        errorEl.classList.add("d-none");
+        document.getElementById("saveProfileText").innerText = "Saving...";
+        document.getElementById("saveProfileSpinner").classList.remove("d-none");
+        try {
+            const res = await fetchWithRefresh(`${API_BASE_URL}/auth/update-profile`, {
+                method: "PUT",
+                body: JSON.stringify({ fullname, username, phone: phone ? Number(phone) : null })
+            });
+            if (!res.ok) throw new Error("Failed to update");
+            successEl.classList.remove("d-none");
+            localStorage.setItem("fullName", fullname || username);
+            document.getElementById("adminNameTop").innerText = fullname || username;
+            document.getElementById("sidebarName").innerText = fullname || username;
+        } catch(e) {
+            errorEl.innerText = e.message;
+            errorEl.classList.remove("d-none");
+        } finally {
+            document.getElementById("saveProfileText").innerText = "Save Changes";
+            document.getElementById("saveProfileSpinner").classList.add("d-none");
+        }
+    }
+
+    async function changePassword() {
+        const currentPw = document.getElementById("p_currentPw").value.trim();
+        const newPw = document.getElementById("p_newPw").value.trim();
+        const confirmPw = document.getElementById("p_confirmPw").value.trim();
+        const successEl = document.getElementById("changePwSuccess");
+        const errorEl = document.getElementById("changePwError");
+        successEl.classList.add("d-none");
+        errorEl.classList.add("d-none");
+        if (!currentPw || !newPw || !confirmPw) { errorEl.innerText = "Please fill all fields."; errorEl.classList.remove("d-none"); return; }
+        if (newPw !== confirmPw) { errorEl.innerText = "Passwords do not match."; errorEl.classList.remove("d-none"); return; }
+        if (newPw.length < 6) { errorEl.innerText = "Password must be at least 6 characters."; errorEl.classList.remove("d-none"); return; }
+        document.getElementById("changePwText").innerText = "Changing...";
+        document.getElementById("changePwSpinner").classList.remove("d-none");
+        try {
+            const res = await fetchWithRefresh(`${API_BASE_URL}/auth/change-password`, {
+                method: "POST",
+                body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw })
+            });
+            if (!res.ok) { const e = await res.json(); throw new Error(e.message || "Failed"); }
+            successEl.classList.remove("d-none");
+            ["p_currentPw","p_newPw","p_confirmPw"].forEach(id => document.getElementById(id).value = "");
+        } catch(e) {
+            errorEl.innerText = e.message;
+            errorEl.classList.remove("d-none");
+        } finally {
+            document.getElementById("changePwText").innerText = "Change Password";
+            document.getElementById("changePwSpinner").classList.add("d-none");
+        }
+    }
+
+    function togglePw(id, btn) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+        btn.innerHTML = input.type === "password" ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+    }
+
+    /* ── Sidebar Mobile ── */
+    function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("mobileOverlay").classList.add("show");
+    }
+
+    function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("mobileOverlay").classList.remove("show");
+    }
+
+    function logout() { adminLogout(); }
+
+    /* ── Boot ── */
+    applyRoleRestrictions();
+    loadDashboard();
+</script>
 
 </body>
-
 </html>

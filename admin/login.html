@@ -190,7 +190,7 @@
                     //  Cookie is set by server — just store display info
                     localStorage.setItem("loggedIn", "true");
                     localStorage.setItem("role", role);
-                    localStorage.setItem("fullName", data.username || "Admin");
+                    localStorage.setItem("fullName",data.fullName || data.username || "Admin");
                     localStorage.setItem("email", data.email || "");
                     localStorage.setItem("userId", data.userId || "");
                     window.location.href = "dashboard.html";

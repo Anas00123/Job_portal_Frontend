@@ -1,520 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employers - Admin Panel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
     <style>
-        body {
-            margin: 0;
-            background-color: #f4f6f9;
-            overflow-x: hidden;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            width: 250px;
-            height: 100vh;
-            background: #0b2239;
-            color: #fff;
-            padding-top: 20px;
-            transition: 0.3s;
-            z-index: 1000;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar h4 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            color: #cfd8dc;
-            padding: 12px 20px;
-            display: block;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #133b5c;
-            color: #fff;
-        }
-
-        .overlay {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            top: 0;
-            left: 0;
-            display: none;
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        .main-content {
-            margin-left: 0;
-            padding: 20px;
-            transition: 0.3s;
-        }
-
-        @media(min-width: 992px) {
-            .sidebar {
-                left: 0;
-            }
-
-            .main-content {
-                margin-left: 250px;
-            }
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .admin-name-btn {
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .admin-name-btn:hover {
-            text-decoration: underline;
-        }
+        body { background:#f4f6fb; font-family:'Segoe UI',sans-serif; margin:0; }
+        .page-hero { background:linear-gradient(135deg,#0b2239 0%,#1a3a5c 100%); border-radius:16px; padding:28px 32px; margin-bottom:24px; color:white; }
+        .page-hero h4 { font-weight:700; margin:0 0 4px; }
+        .page-hero p { color:rgba(255,255,255,0.6); font-size:14px; margin:0; }
+        .stat-card { background:white; border-radius:14px; padding:20px; border:1px solid #e5e7eb; transition:all .2s; }
+        .stat-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+        .stat-card-top { display:flex; justify-content:space-between; align-items:flex-start; }
+        .stat-value { font-size:28px; font-weight:700; }
+        .stat-label { font-size:12.5px; color:#64748b; margin-bottom:4px; }
+        .stat-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+        .table-card { background:white; border-radius:14px; border:1px solid #e5e7eb; overflow:hidden; }
+        .table-card-header { padding:16px 20px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .table-card-title { font-size:14px; font-weight:600; color:#0f172a; }
+        .search-box { display:flex; align-items:center; background:#f8fafc; border:1px solid #e5e7eb; border-radius:8px; padding:6px 12px; gap:8px; }
+        .search-box input { border:none; outline:none; background:transparent; font-size:13px; width:200px; }
+        .filter-tabs { display:flex; gap:6px; flex-wrap:wrap; }
+        .filter-tab { padding:5px 14px; border-radius:20px; font-size:13px; font-weight:500; border:1.5px solid #e5e7eb; background:white; cursor:pointer; transition:all .2s; }
+        .filter-tab:hover { border-color:#0b2239; }
+        .filter-tab.active { background:#0b2239; color:white; border-color:#0b2239; }
+        .toast-container-custom { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+        .toast-msg { padding:12px 18px; border-radius:8px; color:white; font-size:14px; box-shadow:0 4px 14px rgba(0,0,0,0.18); min-width:240px; animation:fadeInUp .3s ease; }
+        .toast-msg.success { background:#198754; }
+        .toast-msg.danger { background:#dc3545; }
+        .toast-msg.warning { background:#d97706; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);} }
+        .profile-modal-avatar { width:52px; height:52px; border-radius:50%; background:#0d9488; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex-shrink:0; }
     </style>
 </head>
-
 <body>
 
-    <div class="sidebar" id="sidebar">
-        <h4>Admin Panel</h4>
-        <a href="dashboard.html"><i class="fa fa-chart-line me-2"></i> Dashboard</a>
-        <a href="manageEmployers.html" class="active"><i class="fa fa-building me-2"></i> Employers</a>
-        <a href="candidates.html"><i class="fa fa-users me-2"></i> Candidates</a>
-        <a href="applications.html"><i class="fa fa-file-alt me-2"></i> Applications</a>
-        <a href="subAdmins.html"><i class="fa fa-shield me-2"></i> Sub Admins</a>
-        <a href="companies.html"><i class="fa fa-city me-2"></i> Companies</a>
-                  <a href="jobCategories.html" class="active">
-                <i class="bi bi-tags me-2"></i> Job Categories
-            </a>
-        <a href="#" onclick="logout()"><i class="fa fa-sign-out-alt me-2"></i> Logout</a>
+<!-- Mobile Topbar -->
+<div class="mobile-topbar">
+    <button class="mobile-menu-btn" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+    <span id="mobileBrand" style="color:white;font-weight:700;font-size:16px;">JobsHunt</span>
+    <div style="width:24px;"></div>
+</div>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar"></div>
+<div class="spinner-overlay" id="spinnerOverlay"><div class="spinner-border text-primary"></div></div>
+<div class="toast-container-custom" id="toastContainer"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h4>Employers</h4>
+            <small>Manage recruiter accounts and access</small>
+        </div>
+        <div class="topbar-right">
+            <div id="subAdminNotice" style="display:none;">
+                <span class="badge bg-warning text-dark px-3 py-2" style="font-size:12px;">
+                    <i class="bi bi-shield-exclamation me-1"></i> Sub Admin Mode
+                </span>
+            </div>
+            <button class="topbar-btn" onclick="openProfileModal()">
+                <i class="bi bi-person-circle"></i>
+                <span id="adminNameTop">Admin</span>
+            </button>
+        </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="content">
 
-    <div class="main-content">
-        <nav class="navbar navbar-light bg-white shadow-sm mb-4 rounded">
-            <div class="container-fluid">
-                <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
-                <span class="navbar-brand mb-0 h4">Employers</span>
-                <span class="admin-name-btn" onclick="openProfileModal()" id="adminName">Welcome, Admin</span>
-            </div>
-        </nav>
+        <!-- Hero -->
+        <div class="page-hero">
+            <h4><i class="bi bi-building-fill me-2"></i>Employers</h4>
+            <p>Activate, suspend and monitor all recruiter accounts on the platform</p>
+        </div>
 
-        <div class="row g-4 mb-4">
-            <div class="col-md-4 col-sm-6">
-                <div class="card p-3">
-                    <h6>Total Employers</h6>
-                    <h3 id="totalEmployers">—</h3>
+        <!-- Stat Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Total Employers</div>
+                            <div class="stat-value" id="totalEmployers">--</div>
+                        </div>
+                        <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-6">
-                <div class="card p-3">
-                    <h6>Active Employers</h6>
-                    <h3 id="activeEmployers">—</h3>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Active</div>
+                            <div class="stat-value text-success" id="activeEmployers">--</div>
+                        </div>
+                        <div class="stat-icon" style="background:#f0fdf4;color:#22c55e;">
+                            <i class="bi bi-building-check"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 col-sm-12">
-                <div class="card p-3">
-                    <h6>Pending / Suspended</h6>
-                    <h3 id="blockedEmployers">—</h3>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <div>
+                            <div class="stat-label">Pending / Suspended</div>
+                            <div class="stat-value text-warning" id="blockedEmployers">--</div>
+                        </div>
+                        <div class="stat-icon" style="background:#fffbeb;color:#f59e0b;">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card p-4">
+        <!-- Table Card -->
+        <div class="table-card">
+            <div class="table-card-header">
+                <span class="table-card-title">
+                    <i class="bi bi-buildings me-2" style="color:#0d9488;"></i>All Employers
+                </span>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="search-box">
+                        <i class="bi bi-search" style="color:#94a3b8;"></i>
+                        <input type="text" id="searchInput" placeholder="Search employer..." oninput="filterTable()">
+                    </div>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="setFilter('ALL',this)">All</button>
+                        <button class="filter-tab" onclick="setFilter('ACTIVE',this)">Active</button>
+                        <button class="filter-tab" onclick="setFilter('PENDING',this)">Pending</button>
+                        <button class="filter-tab" onclick="setFilter('SUSPENDED',this)">Suspended</button>
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle mb-0" style="font-size:13.5px;">
+                    <thead style="background:#f8fafc;">
                         <tr>
-                            <th>#</th>
-                            <th>Full Name</th>
-                            <th>Company</th>
-                            <th>Email</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Registered</th>
-                            <th>Action</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">#</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Full Name</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Company</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Email</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Location</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Status</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Registered</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="employerTableBody">
                         <tr>
-                            <td colspan="8" class="text-center py-4">
-                                <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
-                                Loading...
+                            <td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">
+                                <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div id="emptyState" class="text-center py-5 d-none">
+                <i class="bi bi-building" style="font-size:36px;color:#cbd5e1;display:block;margin-bottom:8px;"></i>
+                <h6 class="text-muted">No employers found</h6>
+            </div>
         </div>
-    </div>
 
-    <!-- ===== PROFILE MODAL ===== -->
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>My Profile</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#0b2239;">
+                <h5 class="modal-title text-white"><i class="bi bi-person-circle me-2"></i>My Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded" style="background:#f8fafc;">
+                    <div class="profile-modal-avatar" id="profileAvatarModal">A</div>
+                    <div>
+                        <h5 class="mb-1" id="profileDisplayName">--</h5>
+                        <p class="text-muted mb-1 small" id="profileDisplayEmail">--</p>
+                        <span class="badge" id="profileDisplayRole" style="background:#0b2239;">--</span>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                            style="width:60px;height:60px;font-size:24px;color:white;">
-                            <i class="bi bi-person"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-1" id="profileDisplayName">--</h5>
-                            <p class="text-muted mb-1" id="profileDisplayEmail">--</p>
-                            <span class="badge bg-success" id="profileDisplayRole">--</span>
-                        </div>
+                <ul class="nav nav-tabs mb-3" id="profileTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="switchProfileTab('editProfile',this);return false;">
+                            <i class="bi bi-pencil me-1"></i>Edit Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="switchProfileTab('changePassword',this);return false;">
+                            <i class="bi bi-lock me-1"></i>Change Password
+                        </a>
+                    </li>
+                </ul>
+                <div id="tab_editProfile">
+                    <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated!</div>
+                    <div class="alert alert-danger d-none" id="editProfileError"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label fw-semibold">Full Name</label><input type="text" class="form-control" id="p_fullname"/></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Username</label><input type="text" class="form-control" id="p_username"/></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Email</label><input type="email" class="form-control" id="p_email" disabled/><small class="text-muted">Cannot be changed</small></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Phone</label><input type="number" class="form-control" id="p_phone"/></div>
                     </div>
-                    <ul class="nav nav-tabs mb-3" id="profileTabs">
-                        <li class="nav-item"><a class="nav-link active" href="#"
-                                onclick="switchTab('editProfile',this)"><i class="bi bi-pencil me-1"></i> Edit
-                                Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('changePassword',this)"><i
-                                    class="bi bi-lock me-1"></i> Change Password</a></li>
-                    </ul>
-                    <div id="tab_editProfile">
-                        <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated successfully!
-                        </div>
-                        <div class="alert alert-danger d-none" id="editProfileError"></div>
-                        <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label fw-semibold">Full Name</label><input
-                                    type="text" class="form-control" id="p_fullname" /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold">Username</label><input
-                                    type="text" class="form-control" id="p_username" /></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold">Email</label><input type="email"
-                                    class="form-control" id="p_email" disabled /><small class="text-muted">Email cannot
-                                    be changed</small></div>
-                            <div class="col-md-6"><label class="form-label fw-semibold">Phone</label><input
-                                    type="number" class="form-control" id="p_phone" /></div>
-                        </div>
-                        <div class="mt-3 text-end">
-                            <button class="btn btn-success" id="saveProfileBtn" onclick="saveProfile()">
-                                <span id="saveProfileText">Save Changes</span>
-                                <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                            </button>
-                        </div>
+                    <div class="mt-3 text-end">
+                        <button class="btn btn-success" onclick="saveProfile()">
+                            <span id="saveProfileText">Save Changes</span>
+                            <span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
                     </div>
-                    <div id="tab_changePassword" style="display:none;">
-                        <div class="alert alert-success d-none" id="changePwSuccess">Password changed successfully!
-                        </div>
-                        <div class="alert alert-danger d-none" id="changePwError"></div>
-                        <form onsubmit="return false;">
-                            <div class="mb-3"><label class="form-label fw-semibold">Current Password</label>
-                                <div class="input-group"><input type="password" class="form-control" id="p_currentPw"
-                                        placeholder="Enter current password" /><button class="btn btn-outline-secondary"
-                                        type="button" onclick="togglePw('p_currentPw',this)"><i
-                                            class="bi bi-eye"></i></button></div>
-                            </div>
-                            <div class="mb-3"><label class="form-label fw-semibold">New Password</label>
-                                <div class="input-group"><input type="password" class="form-control" id="p_newPw"
-                                        placeholder="Enter new password" /><button class="btn btn-outline-secondary"
-                                        type="button" onclick="togglePw('p_newPw',this)"><i
-                                            class="bi bi-eye"></i></button></div>
-                            </div>
-                            <div class="mb-3"><label class="form-label fw-semibold">Confirm New Password</label>
-                                <div class="input-group"><input type="password" class="form-control" id="p_confirmPw"
-                                        placeholder="Confirm new password" /><button class="btn btn-outline-secondary"
-                                        type="button" onclick="togglePw('p_confirmPw',this)"><i
-                                            class="bi bi-eye"></i></button></div>
-                            </div>
-                            <div class="text-end">
-                                <button class="btn btn-warning" id="changePwBtn" type="button"
-                                    onclick="changePassword()">
-                                    <span id="changePwText">Change Password</span>
-                                    <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
-                                </button>
-                            </div>
-                        </form>
+                </div>
+                <div id="tab_changePassword" style="display:none;">
+                    <div class="alert alert-success d-none" id="changePwSuccess">Password changed!</div>
+                    <div class="alert alert-danger d-none" id="changePwError"></div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Current Password</label>
+                        <div class="input-group"><input type="password" class="form-control" id="p_currentPw" placeholder="Current password"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_currentPw',this)"><i class="bi bi-eye"></i></button></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">New Password</label>
+                        <div class="input-group"><input type="password" class="form-control" id="p_newPw" placeholder="New password"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_newPw',this)"><i class="bi bi-eye"></i></button></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Confirm Password</label>
+                        <div class="input-group"><input type="password" class="form-control" id="p_confirmPw" placeholder="Confirm password"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_confirmPw',this)"><i class="bi bi-eye"></i></button></div>
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-warning" onclick="changePassword()">
+                            <span id="changePwText">Change Password</span>
+                            <span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../config.js"></script>
+<script src="/assets/js/adminsidepanel/adminSidebar.js"></script>
+<script>
+    window._activePage = "employers";
+    protectAdminPage();
 
-    <script src="../config.js"></script>
-    <script>
-        protectAdminPage();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        if (!isLoggedIn()) window.location.href = "login.html";
-        document.getElementById("adminName").innerText = "Welcome, " + getAdminName();
+    let allEmployers = [];
+    let activeFilter = "ALL";
 
-        const statusMap = {
-            "ACTIVE": { cls: "bg-success", label: "Active" },
-            "PENDING": { cls: "bg-warning text-dark", label: "Pending" },
-            "SUSPENDED": { cls: "bg-danger", label: "Suspended" }
-        };
+    document.addEventListener("DOMContentLoaded", () => {
+        renderAdminSidebar("employers");
+        loadEmployers();
+    });
 
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("active");
-            document.getElementById("overlay").classList.toggle("active");
+    function showSpinner() { document.getElementById("spinnerOverlay").classList.add("show"); }
+    function hideSpinner() { document.getElementById("spinnerOverlay").classList.remove("show"); }
+
+    function showToast(message, type = "success") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast-msg ${type}`;
+        const icon = type === "success" ? "check-circle" : type === "warning" ? "exclamation-circle" : "x-circle";
+        toast.innerHTML = `<i class="bi bi-${icon} me-2"></i>${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    function formatDate(d) {
+        return d ? new Date(d).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }) : "N/A";
+    }
+
+    const statusMap = {
+        "ACTIVE":    { cls:"bg-success",          label:"Active"    },
+        "PENDING":   { cls:"bg-warning text-dark", label:"Pending"   },
+        "SUSPENDED": { cls:"bg-danger",            label:"Suspended" }
+    };
+
+    function getStatusBadge(status) {
+        const s = statusMap[status] || { cls:"bg-secondary", label: status || "N/A" };
+        return `<span class="badge ${s.cls}">${s.label}</span>`;
+    }
+
+    /* ── Load Employers ── */
+    async function loadEmployers() {
+        showSpinner();
+        const tbody = document.getElementById("employerTableBody");
+        try {
+            const res = await fetchWithRefresh(`${API_BASE_URL}/admin/recruiters`);
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const raw = await res.json();
+            allEmployers = Array.isArray(raw) ? raw : (raw.content || []);
+
+            document.getElementById("totalEmployers").textContent = allEmployers.length;
+            document.getElementById("activeEmployers").textContent =
+                allEmployers.filter(r => r.recruiterStatus === "ACTIVE").length;
+            document.getElementById("blockedEmployers").textContent =
+                allEmployers.filter(r => r.recruiterStatus === "PENDING" || r.recruiterStatus === "SUSPENDED").length;
+
+            renderTable(allEmployers);
+        } catch (err) {
+            console.error("Load employers error:", err);
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#dc2626;padding:32px;">Failed to load. Please refresh.</td></tr>`;
+        } finally { hideSpinner(); }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById("employerTableBody");
+        const empty = document.getElementById("emptyState");
+
+        if (!data.length) {
+            tbody.innerHTML = "";
+            empty.classList.remove("d-none");
+            return;
         }
+        empty.classList.add("d-none");
 
-        function showToast(message, type = "success") {
-            const wrapper = document.createElement("div");
-            wrapper.style.cssText = "position:fixed;bottom:20px;right:20px;z-index:9999;min-width:260px;";
-            wrapper.innerHTML = `
-        <div class="toast show align-items-center text-white bg-${type} border-0 shadow">
-            <div class="d-flex">
-                <div class="toast-body fw-semibold">${message}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                        onclick="this.closest('div[style]').remove()"></button>
-            </div>
-        </div>`;
-            document.body.appendChild(wrapper);
-            setTimeout(() => wrapper.remove(), 3500);
-        }
-
-        function formatDate(d) {
-            return d ? new Date(d).toLocaleDateString("en-IN", {
-                day: "2-digit", month: "short", year: "numeric"
-            }) : "N/A";
-        }
-
-        // ── Load Employers ──
-        document.addEventListener("DOMContentLoaded", loadEmployers);
-
-        async function loadEmployers() {
-            const tbody = document.getElementById("employerTableBody");
-            try {
-                // ✅ fetchWithRefresh + .json()
-                const res = await fetchWithRefresh(`${API_BASE_URL}/admin/recruiters`);
-                if (!res.ok) throw new Error(`Server error: ${res.status}`);
-                const raw = await res.json();
-                const data = Array.isArray(raw) ? raw : (raw.content || []);
-
-                document.getElementById("totalEmployers").textContent = data.length;
-                document.getElementById("activeEmployers").textContent =
-                    data.filter(r => r.recruiterStatus === "ACTIVE").length;
-                document.getElementById("blockedEmployers").textContent =
-                    data.filter(r => r.recruiterStatus === "PENDING" ||
-                        r.recruiterStatus === "SUSPENDED").length;
-
-                if (!data.length) {
-                    tbody.innerHTML = `<tr>
-                <td colspan="8" class="text-center text-muted py-4">No employers found.</td>
-            </tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = data.map((r, i) => {
-                    const badge = statusMap[r.recruiterStatus] ||
-                        { cls: "bg-secondary", label: r.recruiterStatus || "N/A" };
-                    return `<tr>
-                <td>${i + 1}</td>
-                <td>${r.fullName ?? "N/A"}</td>
-                <td>${r.companyName ?? "N/A"}</td>
-                <td>${r.email ?? "N/A"}</td>
-                <td>${r.city ?? "N/A"}</td>
-                <td><span class="badge ${badge.cls}">${badge.label}</span></td>
-                <td>${formatDate(r.registeredAt || r.created_at)}</td>
-                <td>
+        tbody.innerHTML = data.map((r, i) => `
+            <tr id="erow-${r.recruiterId}">
+                <td style="padding:12px 16px;color:#64748b;">${i + 1}</td>
+                <td style="padding:12px 16px;font-weight:600;">${r.fullName ?? "N/A"}</td>
+                <td style="padding:12px 16px;color:#64748b;">${r.companyName ?? "N/A"}</td>
+                <td style="padding:12px 16px;color:#64748b;">${r.email ?? "N/A"}</td>
+                <td style="padding:12px 16px;color:#64748b;">${r.city ?? "N/A"}</td>
+                <td style="padding:12px 16px;" id="ebadge-${r.recruiterId}">${getStatusBadge(r.recruiterStatus)}</td>
+                <td style="padding:12px 16px;color:#94a3b8;font-size:12.5px;">${formatDate(r.registeredAt || r.created_at)}</td>
+                <td style="padding:12px 16px;">
                     <div class="d-flex gap-1 flex-wrap">
                         <button class="btn btn-sm btn-outline-success"
-                                onclick="changeStatus(${r.recruiterId}, 'ACTIVE')"
+                                onclick="changeStatus(${r.recruiterId},'ACTIVE')"
                                 ${r.recruiterStatus === "ACTIVE" ? "disabled" : ""}>
                             <i class="bi bi-check-circle me-1"></i>Activate
                         </button>
                         <button class="btn btn-sm btn-outline-warning"
-                                onclick="changeStatus(${r.recruiterId}, 'SUSPENDED')"
+                                onclick="changeStatus(${r.recruiterId},'SUSPENDED')"
                                 ${r.recruiterStatus === "SUSPENDED" ? "disabled" : ""}>
                             <i class="bi bi-slash-circle me-1"></i>Suspend
                         </button>
                     </div>
                 </td>
-            </tr>`;
-                }).join("");
+            </tr>`).join("");
+    }
 
-            } catch (err) {
-                console.error("Load employers error:", err);
-                tbody.innerHTML = `<tr>
-            <td colspan="8" class="text-center text-danger py-4">
-                Failed to load employers. Please refresh.
-            </td>
-        </tr>`;
+    function setFilter(status, btn) {
+        activeFilter = status;
+        document.querySelectorAll(".filter-tab").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        filterTable();
+    }
+
+    function filterTable() {
+        const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+        const filtered = allEmployers.filter(r => {
+            const matchStatus = activeFilter === "ALL" || r.recruiterStatus === activeFilter;
+            const matchSearch = !keyword ||
+                (r.fullName ?? "").toLowerCase().includes(keyword) ||
+                (r.companyName ?? "").toLowerCase().includes(keyword) ||
+                (r.email ?? "").toLowerCase().includes(keyword);
+            return matchStatus && matchSearch;
+        });
+        renderTable(filtered);
+    }
+
+    /* ── Change Status ── */
+    async function changeStatus(id, status) {
+        const action = status === "ACTIVE" ? "activate" : "suspend";
+        if (!confirm(`${status === "ACTIVE" ? "Activate" : "Suspend"} this recruiter?`)) return;
+        try {
+            const res = await fetchWithRefresh(
+                `${API_BASE_URL}/admin/recruiters/${id}/${action}`,
+                { method: "PATCH", body: JSON.stringify({ status }) }
+            );
+            if (!res.ok) throw new Error();
+
+            // Update inline without full reload
+            const employer = allEmployers.find(r => r.recruiterId === id);
+            if (employer) employer.recruiterStatus = status;
+            const badge = document.getElementById(`ebadge-${id}`);
+            if (badge) badge.innerHTML = getStatusBadge(status);
+            const row = document.getElementById(`erow-${id}`);
+            if (row) {
+                row.querySelectorAll("button")[0].disabled = status === "ACTIVE";
+                row.querySelectorAll("button")[1].disabled = status === "SUSPENDED";
             }
+
+            // Update stat counts
+            document.getElementById("activeEmployers").textContent =
+                allEmployers.filter(r => r.recruiterStatus === "ACTIVE").length;
+            document.getElementById("blockedEmployers").textContent =
+                allEmployers.filter(r => r.recruiterStatus === "PENDING" || r.recruiterStatus === "SUSPENDED").length;
+
+            showToast(`Recruiter ${status === "ACTIVE" ? "activated" : "suspended"} ✓`,
+                status === "ACTIVE" ? "success" : "warning");
+        } catch {
+            showToast("Failed to update status.", "danger");
         }
-
-        // ── Change Recruiter Status ──
-        async function changeStatus(id, status) {
-            const action = status === "ACTIVE" ? "activate" : "suspend";
-            if (!confirm(`${status === "ACTIVE" ? "Activate" : "Suspend"} this recruiter?`)) return;
-            try {
-                const res = await fetchWithRefresh(
-                    `${API_BASE_URL}/admin/recruiters/${id}/${action}`,
-                    { method: "PATCH", body: JSON.stringify({ status }) }  // ✅ JSON.stringify
-                );
-                if (!res.ok) throw new Error();
-                showToast(`Recruiter ${status === "ACTIVE" ? "activated" : "suspended"} ✓`);
-                loadEmployers();
-            } catch {
-                showToast("Failed to update status.", "danger");
-            }
-        }
-
-        // ── Profile Modal ──
-        async function openProfileModal() {
-            switchTab("editProfile", document.querySelector("#profileTabs .nav-link"));
-            ["editProfileSuccess", "editProfileError", "changePwSuccess", "changePwError"]
-                .forEach(id => document.getElementById(id).classList.add("d-none"));
-            ["p_currentPw", "p_newPw", "p_confirmPw"]
-                .forEach(id => document.getElementById(id).value = "");
-
-            new bootstrap.Modal(document.getElementById("profileModal")).show();
-
-            try {
-                // ✅ .json() on response
-                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/me`);
-                const data = await res.json();
-                const displayName = data.fullName || data.username || "Admin";
-
-                document.getElementById("profileDisplayName").innerText = displayName;
-                document.getElementById("profileDisplayEmail").innerText = data.username || "";
-                document.getElementById("profileDisplayRole").innerText = data.role || "ADMIN";
-                document.getElementById("p_fullname").value = data.fullName || "";
-                document.getElementById("p_username").value = data.username || "";
-                document.getElementById("p_email").value = data.username || "";
-                document.getElementById("p_phone").value = data.phone || "";
-                document.getElementById("adminName").innerText = "Welcome, " + displayName;
-                localStorage.setItem("fullName", displayName);
-            } catch (err) {
-                console.error("Failed to load profile:", err);
-            }
-        }
-
-        function switchTab(tabName, clickedLink) {
-            document.getElementById("tab_editProfile").style.display = "none";
-            document.getElementById("tab_changePassword").style.display = "none";
-            document.getElementById("tab_" + tabName).style.display = "block";
-            document.querySelectorAll("#profileTabs .nav-link")
-                .forEach(l => l.classList.remove("active"));
-            clickedLink.classList.add("active");
-        }
-
-        async function saveProfile() {
-            const fullname = document.getElementById("p_fullname").value.trim();
-            const username = document.getElementById("p_username").value.trim();
-            const phone = document.getElementById("p_phone").value.trim();
-            const successEl = document.getElementById("editProfileSuccess");
-            const errorEl = document.getElementById("editProfileError");
-            successEl.classList.add("d-none");
-            errorEl.classList.add("d-none");
-
-            const btn = document.getElementById("saveProfileBtn");
-            const btnText = document.getElementById("saveProfileText");
-            const spinner = document.getElementById("saveProfileSpinner");
-            btn.disabled = true; btnText.innerText = "Saving..."; spinner.classList.remove("d-none");
-
-            try {
-                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/update-profile`, {
-                    method: "PUT",
-                    body: JSON.stringify({ fullname, username, phone: phone ? Number(phone) : null })
-                });
-                if (!res.ok) throw new Error("Failed to update profile");
-                successEl.classList.remove("d-none");
-                const displayName = fullname || username;
-                document.getElementById("profileDisplayName").innerText = displayName;
-                document.getElementById("adminName").innerText = "Welcome, " + displayName;
-                localStorage.setItem("fullName", displayName);
-            } catch (err) {
-                errorEl.innerText = err.message || "Failed to update profile.";
-                errorEl.classList.remove("d-none");
-            } finally {
-                btn.disabled = false; btnText.innerText = "Save Changes"; spinner.classList.add("d-none");
-            }
-        }
-
-        async function changePassword() {
-            const currentPw = document.getElementById("p_currentPw").value.trim();
-            const newPw = document.getElementById("p_newPw").value.trim();
-            const confirmPw = document.getElementById("p_confirmPw").value.trim();
-            const successEl = document.getElementById("changePwSuccess");
-            const errorEl = document.getElementById("changePwError");
-            successEl.classList.add("d-none");
-            errorEl.classList.add("d-none");
-
-            if (!currentPw || !newPw || !confirmPw) {
-                errorEl.innerText = "Please fill all password fields.";
-                errorEl.classList.remove("d-none"); return;
-            }
-            if (newPw !== confirmPw) {
-                errorEl.innerText = "New passwords do not match.";
-                errorEl.classList.remove("d-none"); return;
-            }
-            if (newPw.length < 6) {
-                errorEl.innerText = "Password must be at least 6 characters.";
-                errorEl.classList.remove("d-none"); return;
-            }
-
-            const btn = document.getElementById("changePwBtn");
-            const btnText = document.getElementById("changePwText");
-            const spinner = document.getElementById("changePwSpinner");
-            btn.disabled = true; btnText.innerText = "Changing..."; spinner.classList.remove("d-none");
-
-            try {
-                const res = await fetchWithRefresh(`${API_BASE_URL}/auth/change-password`, {
-                    method: "POST",
-                    body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw })
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || "Failed");
-                }
-                successEl.classList.remove("d-none");
-                ["p_currentPw", "p_newPw", "p_confirmPw"]
-                    .forEach(id => document.getElementById(id).value = "");
-            } catch (err) {
-                errorEl.innerText = err.message || "Failed to change password.";
-                errorEl.classList.remove("d-none");
-            } finally {
-                btn.disabled = false; btnText.innerText = "Change Password"; spinner.classList.add("d-none");
-            }
-        }
-
-        function togglePw(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text"; btn.innerHTML = '<i class="bi bi-eye-slash"></i>';
-            } else {
-                input.type = "password"; btn.innerHTML = '<i class="bi bi-eye"></i>';
-            }
-        }
-
-        function logout() { adminLogout(); }
-    </script>
+    }
+</script>
 </body>
-
 </html>

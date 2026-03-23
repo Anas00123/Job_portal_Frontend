@@ -3,274 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Categories - Admin</title>
+    <title>Job Categories - Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="icon" type="image/png" href="/assets/images/tab-logo1.png">
     <style>
-        body { background-color: #f8f9fa; }
-
-        /* Sidebar */
-        .sidebar {
-            height: 100vh;
-            background: #0b2239;
-            position: fixed;
-            top: 0; left: 0;
-            width: 16.666667%;
-            z-index: 100;
-            overflow-y: auto;
-        }
-        .sidebar a, .sidebar-link {
-            color: #adb5bd;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            transition: background 0.2s;
-        }
-        .sidebar a:hover, .sidebar-link:hover, .sidebar a.active, .sidebar-link.active {
-            background: #343a40;
-            color: #fff;
-        }
-
-        @media (min-width: 768px) { .main-content { margin-left: 16.666667%; } }
-
-        .top-navbar { background-color: #091d33; }
-
-        /* Spinner overlay */
-        .spinner-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(255,255,255,0.6);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        .spinner-overlay.show { display: flex; }
-
-        /* Cards */
-        .category-card {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-        }
-
-        /* Table hover */
-        .table-hover tbody tr:hover { background-color: #f0f4ff; }
-
-        /* Badge pill */
-        .cat-badge {
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 14px;
-            border-radius: 20px;
-        }
-
-        /* Empty state */
-        .empty-state {
-            padding: 48px 0;
-            text-align: center;
-            color: #6c757d;
-        }
-        .empty-state i { font-size: 48px; margin-bottom: 12px; display: block; }
+        body { background:#f4f6fb; font-family:'Segoe UI',sans-serif; margin:0; }
+        .page-hero { background:linear-gradient(135deg,#0b2239 0%,#1a3a5c 100%); border-radius:16px; padding:28px 32px; margin-bottom:24px; color:white; display:flex; justify-content:space-between; align-items:center; }
+        .page-hero h4 { font-weight:700; margin:0 0 4px; }
+        .page-hero p { color:rgba(255,255,255,0.6); font-size:14px; margin:0; }
+        .add-card { background:white; border-radius:14px; border:1px solid #e5e7eb; padding:24px; margin-bottom:20px; }
+        .add-card-title { font-size:14px; font-weight:600; color:#0f172a; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+        .add-card-title i { color:#0d9488; }
+        .table-card { background:white; border-radius:14px; border:1px solid #e5e7eb; overflow:hidden; }
+        .table-card-header { padding:16px 20px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .table-card-title { font-size:14px; font-weight:600; }
+        .search-box { display:flex; align-items:center; background:#f8fafc; border:1px solid #e5e7eb; border-radius:8px; padding:6px 12px; gap:8px; }
+        .search-box input { border:none; outline:none; background:transparent; font-size:13px; width:180px; }
+        .cat-badge { font-size:13px; font-weight:500; padding:5px 12px; border-radius:20px; background:#eff6ff; color:#1d4ed8; display:inline-flex; align-items:center; gap:6px; }
+        .btn-teal { background:#0d9488; color:white; border:none; }
+        .btn-teal:hover { background:#0f766e; color:white; }
+        .alert-box { border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+        /* Sub admin read-only notice */
+        .readonly-notice { background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#92400e; display:flex; align-items:center; gap:8px; }
+        /* Profile Modal */
+        .profile-modal-avatar { width:52px; height:52px; border-radius:50%; background:#0d9488; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex-shrink:0; }
     </style>
 </head>
 <body>
 
-<!-- Spinner Overlay -->
-<div class="spinner-overlay" id="spinnerOverlay">
-    <div class="spinner-border text-primary" role="status"></div>
+<div class="mobile-topbar">
+    <button class="mobile-menu-btn" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+    <span id="mobileBrand" style="color:white;font-weight:700;font-size:16px;">JobsHunt</span>
+    <div style="width:24px;"></div>
 </div>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar"></div>
+<div class="spinner-overlay" id="spinnerOverlay"><div class="spinner-border text-primary"></div></div>
 
-<!-- Mobile Navbar -->
-<nav class="navbar navbar-dark top-navbar d-md-none">
-    <div class="container-fluid">
-        <button class="btn btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-            <i class="bi bi-list"></i>
-        </button>
-        <span class="navbar-brand mb-0 h5">Job Categories</span>
-    </div>
-</nav>
-
-<!-- Mobile Sidebar -->
-<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Admin Panel</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body p-0">
-        <a href="dashboard.html" class="sidebar-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-        <a href="manageEmployers.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Employers</a>
-        <a href="candidates.html" class="sidebar-link"><i class="bi bi-people me-2"></i> Candidates</a>
-        <a href="applications.html" class="sidebar-link"><i class="bi bi-file-earmark-text me-2"></i> Applications</a>
-        <a href="subAdmins.html" class="sidebar-link"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
-        <a href="companies.html" class="sidebar-link"><i class="bi bi-building me-2"></i> Companies</a>
-        <a href="jobCategories.html" class="sidebar-link active"><i class="bi bi-tags me-2"></i> Job Categories</a>
-        <a href="#" class="sidebar-link" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-    </div>
-</div>
-
-<!-- Page Layout -->
-<section>
-    <div class="container-fluid">
-        <div class="row">
-
-            <!-- Desktop Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar p-0">
-                <div class="position-sticky">
-                    <h4 class="text-white text-center py-3">Admin Panel</h4>
-                    <a href="dashboard.html"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                    <a href="manageEmployers.html"><i class="bi bi-building me-2"></i> Employers</a>
-                    <a href="candidates.html"><i class="bi bi-people me-2"></i> Candidates</a>
-                    <a href="applications.html"><i class="bi bi-file-earmark-text me-2"></i> Applications</a>
-                    <a href="subAdmins.html"><i class="bi bi-shield-lock me-2"></i> Sub Admins</a>
-                    <a href="companies.html"><i class="bi bi-building me-2"></i> Companies</a>
-                    <a href="jobCategories.html" class="active"><i class="bi bi-tags me-2"></i> Job Categories</a>
-                    <a href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-                </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main class="col-md-10 ms-sm-auto px-md-4 py-4 main-content">
-
-                <!-- Page Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h4 class="mb-0 fw-bold">Job Categories</h4>
-                        <small class="text-muted">Create and manage job categories for recruiters</small>
-                    </div>
-                    <span class="badge bg-primary fs-6" id="categoryCount">0 Categories</span>
-                </div>
-
-                <!-- Alert Box -->
-                <div id="alertBox" class="alert d-none mb-3" role="alert"></div>
-
-                <!-- Add Category Card -->
-                <div class="card category-card p-4 mb-4">
-                    <h6 class="fw-bold mb-3">
-                        <i class="bi bi-plus-circle-fill me-2 text-primary"></i>Add New Category
-                    </h6>
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-10">
-                            <label class="form-label fw-semibold">
-                                Category Name <span class="text-danger">*</span>
-                            </label>
-                            <input type="text"
-                                   id="categoryName"
-                                   class="form-control"
-                                   placeholder="e.g. Information Technology"
-                                   onkeydown="if(event.key==='Enter') addCategory()">
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary w-100" onclick="addCategory()" id="addBtn">
-                                <i class="bi bi-plus-lg me-1"></i> Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Categories Table Card -->
-                <div class="card category-card">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center border-0 pt-3 px-4">
-                        <span class="fw-bold fs-6">
-                            <i class="bi bi-tags me-2 text-primary"></i>All Categories
-                        </span>
-                        <!-- Search -->
-                        <div class="input-group" style="max-width: 260px;">
-                            <span class="input-group-text bg-white border-end-0">
-                                <i class="bi bi-search text-muted"></i>
-                            </span>
-                            <input type="text"
-                                   id="searchInput"
-                                   class="form-control border-start-0"
-                                   placeholder="Search categories..."
-                                   oninput="filterCategories(this.value)">
-                        </div>
-                    </div>
-
-                    <div class="card-body table-responsive pt-0 px-4">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width:50px">#</th>
-                                    <th>Category Name</th>
-                                    <th style="width:120px">Created</th>
-                                    <th style="width:160px">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="categoryTableBody">
-                                <tr>
-                                    <td colspan="4" class="text-center py-5">
-                                        <div class="spinner-border text-primary" role="status"></div>
-                                        <div class="mt-2 text-muted">Loading categories...</div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </main>
+<div class="main-content">
+    <div class="topbar">
+        <div class="topbar-left">
+            <h4>Job Categories</h4>
+            <small>Manage job categories for recruiters</small>
+        </div>
+        <div class="topbar-right">
+            <div id="subAdminNotice" style="display:none;">
+                <span class="badge bg-warning text-dark px-3 py-2" style="font-size:12px;">
+                    <i class="bi bi-shield-exclamation me-1"></i> View Only Mode
+                </span>
+            </div>
+            <button class="topbar-btn" onclick="openProfileModal()">
+                <i class="bi bi-person-circle"></i>
+                <span id="adminNameTop">Admin</span>
+            </button>
         </div>
     </div>
-</section>
+
+    <div class="content">
+
+        <div id="alertContainer"></div>
+
+        <div class="page-hero">
+            <div>
+                <h4><i class="bi bi-tags me-2"></i>Job Categories</h4>
+                <p>Create and manage job categories used by recruiters</p>
+            </div>
+            <span class="badge" style="background:rgba(255,255,255,0.2);color:white;font-size:14px;padding:8px 16px;" id="categoryCount">0 Categories</span>
+        </div>
+
+        <!-- Sub Admin notice -->
+        <div class="readonly-notice" id="readonlyNotice" style="display:none;">
+            <i class="bi bi-info-circle-fill"></i>
+            You have <strong>view-only</strong> access to categories. Contact an Admin to add, edit or delete categories.
+        </div>
+
+        <!-- Add Category (Admin only) -->
+        <div class="add-card" id="addCategorySection">
+            <div class="add-card-title"><i class="bi bi-plus-circle-fill"></i> Add New Category</div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-10">
+                    <label class="form-label fw-semibold">Category Name <span class="text-danger">*</span></label>
+                    <input type="text" id="categoryName" class="form-control" placeholder="e.g. Information Technology" onkeydown="if(event.key==='Enter') addCategory()">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-teal w-100" onclick="addCategory()" id="addBtn">
+                        <i class="bi bi-plus-lg me-1"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Table -->
+        <div class="table-card">
+            <div class="table-card-header">
+                <span class="table-card-title"><i class="bi bi-tags me-2" style="color:#0d9488;"></i>All Categories</span>
+                <div class="search-box">
+                    <i class="bi bi-search" style="color:#94a3b8;"></i>
+                    <input type="text" id="searchInput" placeholder="Search categories..." oninput="filterCategories(this.value)">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size:13.5px;">
+                    <thead style="background:#f8fafc;">
+                        <tr>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:50px;">#</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Category Name</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:120px;">Created</th>
+                            <th style="padding:12px 16px;color:#64748b;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;width:140px;" id="actionsHeader">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        <tr><td colspan="4" style="text-align:center;padding:40px;color:#94a3b8;">
+                            <div class="spinner-border spinner-border-sm text-primary me-2"></div>Loading...
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header" style="background:#0b2239;">
-                <h5 class="modal-title text-white">
-                    <i class="bi bi-pencil-square me-2"></i>Edit Category
-                </h5>
+                <h5 class="modal-title text-white"><i class="bi bi-pencil-square me-2"></i>Edit Category</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editCategoryId">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">
-                        Category Name <span class="text-danger">*</span>
-                    </label>
-                    <input type="text"
-                           id="editCategoryName"
-                           class="form-control"
-                           placeholder="Enter category name">
-                </div>
+                <label class="form-label fw-semibold">Category Name <span class="text-danger">*</span></label>
+                <input type="text" id="editCategoryName" class="form-control" placeholder="Enter category name">
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg me-1"></i> Cancel
-                </button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button class="btn btn-success" onclick="saveEdit()" id="saveEditBtn">
-                    <i class="bi bi-check-lg me-1"></i> Save Changes
+                    <span>Save Changes</span>
+                    <span id="saveEditSpinner" class="spinner-border spinner-border-sm d-none"></span>
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Delete Confirm Modal -->
+<!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-trash me-2"></i>Delete Category
-                </h5>
+                <h5 class="modal-title"><i class="bi bi-trash me-2"></i>Delete Category</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center">
-                <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3 d-block"></i>
-                <p>Are you sure you want to delete</p>
-                <strong id="deleteCategoryName" class="text-danger"></strong>?
-                <p class="text-muted small mt-2 mb-0">This may affect existing jobs in this category.</p>
+            <div class="modal-body text-center py-3">
+                <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:36px;display:block;margin-bottom:12px;"></i>
+                <p>Delete <strong id="deleteCategoryName" class="text-danger"></strong>?</p>
+                <small class="text-muted">This may affect existing jobs.</small>
             </div>
             <div class="modal-footer justify-content-center">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button class="btn btn-danger" onclick="confirmDelete()" id="confirmDeleteBtn">
-                    <i class="bi bi-trash me-1"></i> Delete
+                    <span id="deleteText">Delete</span>
+                    <span id="deleteSpinner" class="spinner-border spinner-border-sm d-none"></span>
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#0b2239;">
+                <h5 class="modal-title text-white"><i class="bi bi-person-circle me-2"></i>My Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded" style="background:#f8fafc;">
+                    <div class="profile-modal-avatar" id="profileAvatarModal">A</div>
+                    <div>
+                        <h5 class="mb-1" id="profileDisplayName">--</h5>
+                        <p class="text-muted mb-1 small" id="profileDisplayEmail">--</p>
+                        <span class="badge" id="profileDisplayRole" style="background:#0b2239;">--</span>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs mb-3" id="profileTabs">
+                    <li class="nav-item"><a class="nav-link active" href="#" onclick="switchProfileTab('editProfile',this);return false;"><i class="bi bi-pencil me-1"></i>Edit Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="switchProfileTab('changePassword',this);return false;"><i class="bi bi-lock me-1"></i>Change Password</a></li>
+                </ul>
+                <div id="tab_editProfile">
+                    <div class="alert alert-success d-none" id="editProfileSuccess">Profile updated!</div>
+                    <div class="alert alert-danger d-none" id="editProfileError"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label fw-semibold">Full Name</label><input type="text" class="form-control" id="p_fullname"/></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Username</label><input type="text" class="form-control" id="p_username"/></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Email</label><input type="email" class="form-control" id="p_email" disabled/><small class="text-muted">Cannot be changed</small></div>
+                        <div class="col-md-6"><label class="form-label fw-semibold">Phone</label><input type="number" class="form-control" id="p_phone"/></div>
+                    </div>
+                    <div class="mt-3 text-end"><button class="btn btn-success" onclick="saveProfile()"><span id="saveProfileText">Save Changes</span><span id="saveProfileSpinner" class="spinner-border spinner-border-sm d-none"></span></button></div>
+                </div>
+                <div id="tab_changePassword" style="display:none;">
+                    <div class="alert alert-success d-none" id="changePwSuccess">Password changed!</div>
+                    <div class="alert alert-danger d-none" id="changePwError"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Current Password</label><div class="input-group"><input type="password" class="form-control" id="p_currentPw"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_currentPw',this)"><i class="bi bi-eye"></i></button></div></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">New Password</label><div class="input-group"><input type="password" class="form-control" id="p_newPw"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_newPw',this)"><i class="bi bi-eye"></i></button></div></div>
+                    <div class="mb-3"><label class="form-label fw-semibold">Confirm Password</label><div class="input-group"><input type="password" class="form-control" id="p_confirmPw"/><button class="btn btn-outline-secondary" type="button" onclick="togglePw('p_confirmPw',this)"><i class="bi bi-eye"></i></button></div></div>
+                    <div class="text-end"><button class="btn btn-warning" onclick="changePassword()"><span id="changePwText">Change Password</span><span id="changePwSpinner" class="spinner-border spinner-border-sm d-none"></span></button></div>
+                </div>
             </div>
         </div>
     </div>
@@ -278,251 +219,147 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../config.js"></script>
+<script src="/assets/js/adminSidepanel/adminsidebar.js"></script>
 <script>
-
-    // ── Protect page
+    window._activePage = "categories";
     protectAdminPage();
 
-    // ── Store all categories for client-side search
+    const ROLE = localStorage.getItem("role") || "ADMIN";
+    const IS_SUB_ADMIN = ROLE === "SUB_ADMIN";
+
     let allCategories = [];
     let deleteCategoryId = null;
 
-    // ── Show/hide spinner
+    document.addEventListener("DOMContentLoaded", () => {
+        renderAdminSidebar("categories");
+
+        if (IS_SUB_ADMIN) {
+            document.getElementById("readonlyNotice").style.display = "flex";
+            document.getElementById("addCategorySection").style.display = "none";
+            document.getElementById("actionsHeader").style.display = "none";
+        }
+
+        loadCategories();
+    });
+
     function showSpinner() { document.getElementById("spinnerOverlay").classList.add("show"); }
     function hideSpinner() { document.getElementById("spinnerOverlay").classList.remove("show"); }
 
-    // ── Alert helper
-    function showAlert(message, type = "success") {
-        const box = document.getElementById("alertBox");
-        box.className = `alert alert-${type} d-flex align-items-center gap-2`;
-        const icon = type === "success" ? "bi-check-circle-fill"
-                   : type === "danger"  ? "bi-x-circle-fill"
-                   : type === "warning" ? "bi-exclamation-triangle-fill"
-                   : "bi-info-circle-fill";
-        box.innerHTML = `<i class="bi ${icon}"></i> ${message}`;
-        box.classList.remove("d-none");
-        setTimeout(() => box.classList.add("d-none"), 3500);
+    function showAlert(message, type="success") {
+        const container = document.getElementById("alertContainer");
+        const icon = type==="success" ? "bi-check-circle-fill" : type==="danger" ? "bi-x-circle-fill" : "bi-exclamation-triangle-fill";
+        container.innerHTML = `<div class="alert alert-${type} d-flex align-items-center gap-2 mb-3"><i class="bi ${icon}"></i>${message}</div>`;
+        setTimeout(() => container.innerHTML="", 3500);
     }
 
-    // ── Format date
-    function formatDate(dateStr) {
-        if (!dateStr) return "—";
-        return new Date(dateStr).toLocaleDateString("en-IN", {
-            day: "2-digit", month: "short", year: "numeric"
-        });
+    function formatDate(d) {
+        return d ? new Date(d).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : "—";
     }
 
-    // ── Render table rows
+    function escapeQuotes(str) { return str ? str.replace(/'/g,"\\'").replace(/"/g,"&quot;") : ""; }
+
     function renderTable(categories) {
         const tbody = document.getElementById("categoryTableBody");
-
         if (!categories.length) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            <i class="bi bi-inbox text-muted"></i>
-                            <p class="mb-0">No categories found.</p>
-                            <small class="text-muted">Add your first category above!</small>
-                        </div>
-                    </td>
-                </tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:48px;color:#94a3b8;">
+                <i class="bi bi-inbox" style="font-size:36px;display:block;margin-bottom:8px;"></i>No categories found.
+            </td></tr>`;
             return;
         }
-
         tbody.innerHTML = categories.map((cat, i) => `
             <tr>
-                <td class="text-muted fw-semibold">${i + 1}</td>
-                <td>
-                    <span class="badge cat-badge bg-primary bg-opacity-10 text-primary">
-                        <i class="bi bi-tag me-1"></i>${cat.categoryName}
-                    </span>
+                <td style="padding:12px 16px;color:#64748b;">${i+1}</td>
+                <td style="padding:12px 16px;">
+                    <span class="cat-badge"><i class="bi bi-tag"></i>${cat.categoryName}</span>
                 </td>
-                <td class="text-muted small">${formatDate(cat.createdAt)}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-warning me-1"
-                            onclick="openEditModal(${cat.categoryId}, '${escapeQuotes(cat.categoryName)}')">
-                        <i class="bi bi-pencil"></i> Edit
+                <td style="padding:12px 16px;color:#94a3b8;font-size:12.5px;">${formatDate(cat.createdAt)}</td>
+                <td style="padding:12px 16px;">
+                    ${IS_SUB_ADMIN ? '<span style="color:#94a3b8;font-size:12px;">View only</span>' : `
+                    <button class="btn btn-sm btn-outline-warning me-1" onclick="openEditModal(${cat.categoryId},'${escapeQuotes(cat.categoryName)}')">
+                        <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-danger"
-                            onclick="openDeleteModal(${cat.categoryId}, '${escapeQuotes(cat.categoryName)}')">
+                    <button class="btn btn-sm btn-outline-danger" onclick="openDeleteModal(${cat.categoryId},'${escapeQuotes(cat.categoryName)}')">
                         <i class="bi bi-trash"></i>
-                    </button>
+                    </button>`}
                 </td>
-            </tr>
-        `).join('');
+            </tr>`).join("");
     }
 
-    // ── Escape quotes for inline onclick attributes
-    function escapeQuotes(str) {
-        return str ? str.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
-    }
-
-    // ── Load all categories
     async function loadCategories() {
         showSpinner();
         try {
             const res = await fetchWithRefresh(`${API_BASE_URL}/job-categories`);
-            if (!res.ok) throw new Error("Failed to load categories");
-
+            if (!res.ok) throw new Error("Failed");
             allCategories = await res.json();
-            document.getElementById("categoryCount").innerText =
-                `${allCategories.length} ${allCategories.length === 1 ? "Category" : "Categories"}`;
-
+            document.getElementById("categoryCount").innerText = `${allCategories.length} ${allCategories.length===1?"Category":"Categories"}`;
             renderTable(allCategories);
-
-        } catch (err) {
-            console.error(err);
-            document.getElementById("categoryTableBody").innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger py-5">
-                        <i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i>
-                        Failed to load categories. Please refresh.
-                    </td>
-                </tr>`;
-        } finally {
-            hideSpinner();
-        }
+        } catch(err) {
+            document.getElementById("categoryTableBody").innerHTML = `<tr><td colspan="4" style="text-align:center;color:#dc2626;padding:32px;">Failed to load. Please refresh.</td></tr>`;
+        } finally { hideSpinner(); }
     }
 
-    // ── Client-side search/filter
     function filterCategories(keyword) {
-        if (!keyword.trim()) {
-            renderTable(allCategories);
-            return;
-        }
-        const filtered = allCategories.filter(cat =>
-            cat.categoryName.toLowerCase().includes(keyword.toLowerCase())
-        );
-        renderTable(filtered);
+        if (!keyword.trim()) { renderTable(allCategories); return; }
+        renderTable(allCategories.filter(c => c.categoryName.toLowerCase().includes(keyword.toLowerCase())));
     }
 
-    // ── Add category
     async function addCategory() {
-        const categoryName = document.getElementById("categoryName").value.trim();
-
-        if (!categoryName) {
-            showAlert("Please enter a category name", "warning");
-            document.getElementById("categoryName").focus();
-            return;
-        }
-
+        if (IS_SUB_ADMIN) return;
+        const name = document.getElementById("categoryName").value.trim();
+        if (!name) { showAlert("Please enter a category name","warning"); return; }
         const btn = document.getElementById("addBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
-
+        btn.disabled=true; btn.innerHTML=`<span class="spinner-border spinner-border-sm"></span>`;
         try {
-            const res = await fetchWithRefresh(`${API_BASE_URL}/job-categories`, {
-                method: "POST",
-                body: JSON.stringify({ categoryName })
-            });
-
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.message || "Failed to add category");
-            }
-
-            document.getElementById("categoryName").value = "";
-            document.getElementById("searchInput").value = "";
-
-            showAlert(`✅ Category "${categoryName}" added successfully!`);
+            const res=await fetchWithRefresh(`${API_BASE_URL}/job-categories`,{method:"POST",body:JSON.stringify({categoryName:name})});
+            if (!res.ok) { const err=await res.json(); throw new Error(err.message||"Failed"); }
+            document.getElementById("categoryName").value="";
+            document.getElementById("searchInput").value="";
+            showAlert(`Category "${name}" added successfully!`);
             await loadCategories();
-
-        } catch (err) {
-            showAlert(err.message || "Failed to add category", "danger");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="bi bi-plus-lg me-1"></i> Add`;
-        }
+        } catch(err) { showAlert(err.message||"Failed","danger"); }
+        finally { btn.disabled=false; btn.innerHTML=`<i class="bi bi-plus-lg me-1"></i> Add`; }
     }
 
-    // ── Open edit modal
     function openEditModal(id, name) {
-        document.getElementById("editCategoryId").value = id;
-        document.getElementById("editCategoryName").value = name;
+        document.getElementById("editCategoryId").value=id;
+        document.getElementById("editCategoryName").value=name;
         new bootstrap.Modal(document.getElementById("editModal")).show();
     }
 
-    // ── Save edit
     async function saveEdit() {
-        const id           = document.getElementById("editCategoryId").value;
-        const categoryName = document.getElementById("editCategoryName").value.trim();
-
-        if (!categoryName) {
-            showAlert("Category name cannot be empty", "warning");
-            return;
-        }
-
-        const btn = document.getElementById("saveEditBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Saving...`;
-
+        const id=document.getElementById("editCategoryId").value;
+        const name=document.getElementById("editCategoryName").value.trim();
+        if (!name) { showAlert("Category name cannot be empty","warning"); return; }
+        const btn=document.getElementById("saveEditBtn"); btn.disabled=true;
+        document.getElementById("saveEditSpinner").classList.remove("d-none");
         try {
-            const res = await fetchWithRefresh(`${API_BASE_URL}/job-categories/${id}`, {
-                method: "PUT",
-                body: JSON.stringify({ categoryName })
-            });
-
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.message || "Failed to update");
-            }
-
+            const res=await fetchWithRefresh(`${API_BASE_URL}/job-categories/${id}`,{method:"PUT",body:JSON.stringify({categoryName:name})});
+            if (!res.ok) throw new Error("Failed");
             bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
-            document.getElementById("searchInput").value = "";
-            showAlert(`✅ Category updated successfully!`);
-            await loadCategories();
-
-        } catch (err) {
-            showAlert(err.message || "Failed to update category", "danger");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="bi bi-check-lg me-1"></i> Save Changes`;
-        }
+            showAlert("Category updated!"); await loadCategories();
+        } catch(err) { showAlert(err.message||"Failed","danger"); }
+        finally { btn.disabled=false; document.getElementById("saveEditSpinner").classList.add("d-none"); }
     }
 
-    // ── Open delete confirm modal
     function openDeleteModal(id, name) {
-        deleteCategoryId = id;
-        document.getElementById("deleteCategoryName").innerText = name;
+        deleteCategoryId=id;
+        document.getElementById("deleteCategoryName").innerText=name;
         new bootstrap.Modal(document.getElementById("deleteModal")).show();
     }
 
-    // ── Confirm delete
     async function confirmDelete() {
         if (!deleteCategoryId) return;
-
-        const btn = document.getElementById("confirmDeleteBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Deleting...`;
-
+        const btn=document.getElementById("confirmDeleteBtn"); btn.disabled=true;
+        document.getElementById("deleteText").innerText="Deleting...";
+        document.getElementById("deleteSpinner").classList.remove("d-none");
         try {
-            const res = await fetchWithRefresh(`${API_BASE_URL}/job-categories/${deleteCategoryId}`, {
-                method: "DELETE"
-            });
-
-            if (!res.ok) throw new Error("Failed to delete");
-
+            const res=await fetchWithRefresh(`${API_BASE_URL}/job-categories/${deleteCategoryId}`,{method:"DELETE"});
+            if (!res.ok) throw new Error("Failed");
             bootstrap.Modal.getInstance(document.getElementById("deleteModal")).hide();
-            document.getElementById("searchInput").value = "";
-            showAlert(`🗑️ Category deleted successfully!`);
-            deleteCategoryId = null;
-            await loadCategories();
-
-        } catch (err) {
-            showAlert(err.message || "Failed to delete category", "danger");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="bi bi-trash me-1"></i> Delete`;
-        }
+            showAlert("Category deleted!"); deleteCategoryId=null; await loadCategories();
+        } catch(err) { showAlert(err.message||"Failed","danger"); }
+        finally { btn.disabled=false; document.getElementById("deleteText").innerText="Delete"; document.getElementById("deleteSpinner").classList.add("d-none"); }
     }
-
-    // ── Logout
-    function logout() { adminLogout(); }
-
-    // ── Boot
-    loadCategories();
-
 </script>
 </body>
 </html>
